@@ -14,9 +14,9 @@ part = "all";  // all | tray | lid
 
 size = [170, 150];          // ingombro esterno
 r_corner = 10;
-floor_h = 3;
-wall = 2.4;
-lid_t = 3;
+floor_h = 2;
+wall = 2;
+lid_t = 2.4;
 tray_h = base_h - lid_t;    // altezza pareti
 posts = [for (sx = [-1, 1], sy = [-1, 1]) [sx * (size.x / 2 - 7), sy * (size.y / 2 - 7)]];
 
@@ -75,6 +75,11 @@ module tray() {
         for (dy = [-6, 6]) translate([-size.x / 2 + wall + 4, 30 + dy - 1, -1]) cube([4, 2, floor_h + 2]);  // fascetta antistrappo
         // zona WAGO: 3 coppie di asole per fascette
         for (x = [25, 45, 65], dy = [-12, 12]) translate([x - 2, -45 + dy - 1, -1]) cube([4, 2, floor_h + 2]);
+        // feritoie di aerazione nel fondo (zone libere: davanti alla torre e sotto la culla ESP32)
+        for (x0 = [30, -74], i = [0:6]) translate([x0 + i * 6.5, -28, -1]) hull() for (y = [0, 24]) translate([0, y]) cylinder(d = 3, h = floor_h + 2, $fn = 16);
+        // nome sul fronte (+X)
+        translate([size.x / 2 - 0.8, 0, tray_h / 2]) rotate([90, 0, 90]) linear_extrude(2)
+            text("PARALLAX", size = 9, halign = "center", valign = "center", font = "Liberation Sans:style=Bold", spacing = 1.15);
         // fori di fissaggio al tavolo
         for (p = posts) translate([p.x * 0.8, p.y * 0.62, -1]) cylinder(d = 4.2, h = floor_h + 2);
     }
@@ -83,7 +88,10 @@ module tray() {
 module lid() {
     translate([0, 0, tray_h]) difference() {
         union() {
-            linear_extrude(lid_t) rrect(size, r_corner);
+            hull() {   // smusso di 0.8 sul bordo superiore
+                linear_extrude(lid_t - 0.8) rrect(size, r_corner);
+                linear_extrude(lid_t) rrect(size - [1.6, 1.6], r_corner - 0.8);
+            }
             // labbro di guida: entra nella gola sotto la torretta
             translate([0, 0, lid_t]) difference() {
                 cylinder(r = base_lip[1], h = 1.5, $fn = 128);
@@ -92,6 +100,8 @@ module lid() {
         }
         translate([0, 0, -1]) cylinder(r = base_hole_r, h = lid_t + 4, $fn = 128);
         for (p = posts) translate([p.x, p.y, -1]) cylinder(d = m3_d + clr_hole, h = lid_t + 2);
+        // feritoie davanti e dietro, fuori dal disco della torretta (r 55)
+        for (sx = [-1, 1], i = [0:3]) translate([sx * (61 + i * 4.5), 0, -1]) hull() for (y = [-30, 30]) translate([0, y]) cylinder(d = 2.4, h = lid_t + 2, $fn = 16);
     }
 }
 
