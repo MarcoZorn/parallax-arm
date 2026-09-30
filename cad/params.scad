@@ -1,11 +1,12 @@
 // Unica fonte delle quote. Le lunghezze dei link devono coincidere con calc/torque.py.
-// Tolleranze: stampa cad/test/tolerance_coupon.scad e riporta qui i valori che calzano.
+// Tolleranze: i default vanno bene per una stampante tarata in PLA (Kobra S1).
+// Solo se qualcosa non calza: stampa cad/test/tolerance_coupon.scad e riporta qui i valori.
 $fn = 64;
 
 // ---- tolleranze (mm) ----
 clr_hole  = 0.2;   // gioco diametrale fori passanti (M3 -> 3.2)
 clr_pivot = 0.3;   // gioco diametrale fori su cui qualcosa RUOTA
-clr_pocket = 0.2;  // gioco per lato in sedi (servo, squadretta, dado, monete)
+clr_pocket = 0.2;  // gioco per lato in sedi (servo, squadretta, dado, piombi)
 clr_slide = 0.3;   // riduzione per lato del pezzo maschio nelle guide a scorrimento
 snap_hook = 0.4;   // sporgenza dente a scatto (interferenza)
 
@@ -25,11 +26,11 @@ sg_shaft_x = 5.9;                // asse albero dal bordo del corpo lato albero
 sg_boss_d = 11.8;
 sg_boss_h = 4.0;
 
-// ---- squadretta doppia SG90 (varia tra lotti: misurala) ----
-horn_len  = 32.0;  // punta-punta
-horn_hub_d = 7.0;
+// ---- squadretta doppia SG90: valori tipici con un filo di margine (una tasca un po' larga non conta: la tiene la vite) ----
+horn_len  = 32.5;  // punta-punta
+horn_hub_d = 7.2;
 horn_tip_d = 4.0;
-horn_t    = 1.4;   // spessore del piatto
+horn_t    = 1.5;   // spessore del piatto
 horn_screw_d = 2.0; // vite centrale
 
 // ---- viteria ----
@@ -49,7 +50,7 @@ cw_t = lead_depth + 1.2;     // spessore del blocco contrappeso (fondo 1.2)
 cw_shoulder_r = 30;          // = R_CW_SHOULDER in calc/torque.py
 cw_elbow_r = 43;             // raggio dell'arco dei 4 piombi sulla manovella
 
-// ---- SG90 in guancia: quota faccia ESTERNA della squadretta dal fondo del servo (MISURALA, squadretta montata) ----
+// ---- SG90: quota della faccia ESTERNA della squadretta dal fondo del servo (tipico SG90 con squadretta doppia) ----
 sg_horn_face = 30.5;
 
 // ---- torretta ----
