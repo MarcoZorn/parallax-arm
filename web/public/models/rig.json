@@ -1,0 +1,18 @@
+{
+  "params": { "base_h": 40, "sh_h": 62, "L1": 80, "L2": 80, "L3": 45, "tcp_dz": -10,
+              "crank_r": 20, "lev_r": 20, "lev2_r": 30 },
+  "parts": [
+    { "name": "base",      "y": 0, "color": "#3a3f45" },
+    { "name": "turret",    "y": 0, "color": "#5b6168" },
+    { "name": "upper_arm", "y": -25.4, "color": "#e6e7e8" },
+    { "name": "crank",     "y": 18.1, "color": "#ff7a1a" },
+    { "name": "drive_rod", "y": 9.0, "color": "#9aa1a8" },
+    { "name": "lev_rod",   "y": -3.0, "color": "#80878e" },
+    { "name": "forearm",   "y": -18.9, "color": "#e6e7e8" },
+    { "name": "lev_link",  "y": -6.5, "color": "#80878e" },
+    { "name": "lev_rod2",  "y": -10.0, "color": "#9aa1a8" },
+    { "name": "wrist",     "y": 0, "color": "#5b6168" },
+    { "name": "jaw_l",     "y": 0, "color": "#ff7a1a" },
+    { "name": "jaw_r",     "y": 0, "color": "#ff7a1a" }
+  ]
+}
