@@ -21,7 +21,7 @@ quindi **il servo gomito comanda direttamente phi**: la mappatura resta lineare 
 ## 2. Frame e cinematica diretta (mm, gradi)
 
 Parametri: `base_h = 40` (tavolo → faccia inferiore torretta), `sh_h = 62` (→ asse spalla), `L1 = 80`, `L2 = 80`,
-`L3 = 45` (perno polso → centro dita, orizzontale), `tcp_dz = −10` (quota delle dita rispetto al perno polso),
+`L3 = 42` (perno polso → centro dita, orizzontale), `tcp_dz = −24` (quota del centro dita rispetto al perno polso),
 `crank_r = 20`, `lev_r = 20`, `lev2_r = 30`.
 `L3` e `tcp_dz` sono provvisori finché la pinza non è finita: la web app li legge da `rig.json` (`params`), che ha la precedenza sui default.
 
