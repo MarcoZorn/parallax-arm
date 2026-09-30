@@ -75,3 +75,8 @@ y_crank_in = y_crank_hub - crank_spacer - crank_t;   // faccia interna piastra m
 y_lev = [-3.0, 1.0];        // biella di livellamento
 y_post = [1.5, 4.5];        // montante fisso che porta G
 y_rod = [5.0, 9.0];          // biella motrice
+
+// ---- quote globali per firmware/web (docs/03-protocollo.md) ----
+base_h = 40;      // tavolo -> faccia inferiore torretta (= faccia squadretta del servo base)
+tcp_dz = -10;     // quota del centro dita rispetto al perno polso
+lev2_r = 20;      // leva del secondo parallelogramma di livellamento (verso l'alto al gomito)
