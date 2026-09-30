@@ -1,6 +1,6 @@
 // Braccio (spalla -> gomito). Si stampa in piano così com'è: faccia z=0 sul piatto, nessun supporto.
 // Asse spalla nell'origine, gomito a +X. La faccia z=0 guarda il servo spalla (squadretta in tasca).
-// La faccia z=t guarda l'interno della torretta: lì stanno avambraccio, canalina e contrappeso.
+// La faccia z=t guarda l'interno della torretta: lì stanno avambraccio e contrappeso; la canalina è sul lato servo.
 //
 // Montaggio:
 //  1. avvita la squadretta doppia nella tasca con le sue viti autofilettanti (fori pilota da fare con la vite);
@@ -60,12 +60,13 @@ module upper_arm() {
         // passaggio cavo verso il lato servo (poi esce dal foro della guancia): fuori dalla squadretta (r 16)
         translate([20, 0, -1]) cylinder(d = 4.5, h = t + 2);
 
-        // canalina cavi sulla faccia z=t, con 3 ponticelli che trattengono i fili
+        // canalina cavi sulla faccia z=0 (lato servo): al gomito il cavo fa l'ansa all'esterno, lontano dall'avambraccio.
+        // 3 ponticelli sul piatto trattengono i fili (fessura di 2.2 mm: il piattino si infila di taglio)
         difference() {
-            translate([14, -chan_w / 2, t - chan_d]) cube([L1 - 14 - elbow_r - 2, chan_w, chan_d + 1]);
-            for (x = [24, 42, 60]) translate([x, 0, t - 0.8]) difference() {
-                translate([0, -chan_w / 2, 0]) cube([3, chan_w, 0.8]);
-                translate([-1, -1.1, -1]) cube([5, 2.2, 3]);  // fessura di 2.2 mm: il piattino si infila di taglio
+            translate([18, -chan_w / 2, -1]) cube([L1 - 18 - elbow_r - 2, chan_w, chan_d + 1]);
+            for (x = [30, 46, 62]) translate([x, 0, -1]) difference() {
+                translate([0, -chan_w / 2, 0]) cube([3, chan_w, 1.8]);
+                translate([-1, -1.1, -1]) cube([5, 2.2, 4]);
             }
         }
     }
