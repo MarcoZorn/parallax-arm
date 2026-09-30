@@ -12,8 +12,8 @@ include <params.scad>
 use <lib/parts.scad>
 
 G = [-lev_r, sh_h];                        // perno fisso livellamento (x, z)
-groove = [44.35, 46.15, 1.8];              // gola sotto il pavimento: accoppia col labbro della base
-cable_holes = [[-15, 40], [-15, -40]];
+groove = [base_lip[0] - clr_pivot / 2, base_lip[1] + clr_pivot / 2, 1.8];  // gola sotto il pavimento: labbro della base
+cable_holes = [[-8, 42], [-8, -42]];       // r 43: dentro l'apertura della base per tutta la rotazione
 sg_z = [sh_h - (sg_body.x - sg_shaft_x), sh_h + sg_shaft_x];  // corpo SG90 in verticale, albero in alto
 
 module cheek_outline() hull() {
