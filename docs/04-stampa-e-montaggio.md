@@ -1,20 +1,18 @@
 # Stampa, ferramenta e montaggio
 
-## 0. Prima di tutto: il provino
+## 0. Tolleranze (facoltativo)
 
-1. Stampa `cad/stl/00_tolerance_coupon.stl` con **lo stesso PLA e lo stesso profilo** delle parti.
-2. Riporta i valori che calzano in `cad/params.scad`:
+Le tolleranze di default in `cad/params.scad` vanno bene per una stampante tarata in PLA:
+- ±0.2 mm sui fori e nelle sedi;
+- 0.3 mm sulle guide a coda di rondine;
+- sede della squadretta con un filo di margine: tanto la tiene la vite.
 
-   | Provino | Parametro |
-   |---|---|
-   | fori M3 | `clr_hole` |
-   | sedi dado, finestre SG90, squadretta, sedi piombo | `clr_pocket` |
-   | cursori a coda di rondine | `clr_slide` |
-   | colonnine a scatto | `snap_hook` |
+Gli STL in `cad/stl/` sono **pronti da stampare così come sono**.
 
-3. Misura la tua squadretta doppia (`horn_*`) e la quota `sg_horn_face`. Per `sg_horn_face`: squadretta montata sul servo, distanza dal fondo del servo alla faccia esterna della squadretta.
-4. `cad/export.sh` rigenera tutti gli STL, i modelli del digital twin e `web/public/models/rig.json`.
-5. `python3 calc/torque.py` ricontrolla le coppie, e `cad/assembly.scad` le collisioni (vedi l'intestazione del file).
+Il provino `00_tolerance_coupon.stl` serve solo se qualcosa non calza. In quel caso:
+1. riporta i valori in `params.scad`;
+2. lancia `cad/export.sh` per rigenerare tutto (STL, twin, `rig.json`);
+3. `python3 calc/torque.py` e `cad/assembly.scad` ricontrollano coppie e collisioni.
 
 ## 1. Stampa (Kobra S1, PLA)
 
@@ -38,7 +36,14 @@ Tutti gli STL sono già orientati sul piatto.
 | 19_gripper_jaw_x2 | **2** | stesso file due volte, layer 0.16 |
 | 20_esp32cam_cradle | 1 | solo se monti la camera |
 
-Totale circa 290 g di PLA.
+Totale **circa 230 g di PLA**.
+
+Colori consigliati con la Combo:
+- **grafite** per struttura (base, torretta, pinza);
+- **arancio** per le parti in movimento (braccio, avambraccio, manovella, ganasce);
+- **grigio chiaro** per bielle e triangolo.
+
+La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio colore sugli ultimi layer viene in rilievo cromatico.
 
 ## 2. Ferramenta (tutta M3)
 

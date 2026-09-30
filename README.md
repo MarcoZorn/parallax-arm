@@ -45,8 +45,8 @@ docs/                 analisi, cablaggio, protocollo, stampa e montaggio
 
 ## Avvio rapido
 
-1. Stampa `cad/stl/00_tolerance_coupon.stl` e porta i valori in `cad/params.scad`, poi `cad/export.sh`.
-2. Stampa e monta: [docs/04-stampa-e-montaggio.md](docs/04-stampa-e-montaggio.md).
+1. Stampa gli STL di `cad/stl/` (circa 230 g di PLA, niente supporti) e monta: [docs/04-stampa-e-montaggio.md](docs/04-stampa-e-montaggio.md).
+2. Il provino di tolleranze è facoltativo: serve solo se qualcosa non calza.
 3. Cablaggio: [docs/02-cablaggio.md](docs/02-cablaggio.md).
 4. Carica firmware e web app:
    ```bash
@@ -71,3 +71,7 @@ cd web && npm test                        # FK/IK andata e ritorno, profilo di m
 - [02 — Cablaggio senza saldature](docs/02-cablaggio.md)
 - [03 — Cinematica, taratura e protocollo](docs/03-protocollo.md)
 - [04 — Stampa, ferramenta e montaggio](docs/04-stampa-e-montaggio.md)
+
+## Licenza
+
+MIT, vedi [LICENSE](LICENSE).
