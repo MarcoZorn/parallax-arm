@@ -9,10 +9,10 @@ Se cambiano là, vanno aggiornati qui, in `firmware/src/config.h` e in `web/src/
 |---|---|---|---|---|---|
 | 0 | base (yaw) | q1 | ° | −90 … 90 | 0 (braccio in avanti, +X) |
 | 1 | spalla | th2 | ° assoluti dall'orizzontale | 20 … 160 | 90 (braccio verticale) |
-| 2 | gomito | phi | ° assoluti dall'orizzontale (angolo avambraccio) | −75 … 75 | 0 (avambraccio orizzontale) |
+| 2 | gomito | phi | ° assoluti dall'orizzontale (angolo avambraccio) | −70 … 70 | 0 (avambraccio orizzontale) |
 | 3 | pinza | g | mm di apertura | 0 … 59 | 29.5 |
 
-**Vincolo del parallelogramma** (in aggiunta ai limiti): `20 ≤ th2 − phi ≤ 160`.
+**Vincolo del parallelogramma** (in aggiunta ai limiti): `20 ≤ th2 − phi ≤ 150`. Limiti e vincolo vengono dai piani delle parti e dalla ferramenta, verificati con `cad/assembly.scad`.
 Un target fuori vincolo **viene rifiutato** (messaggio `err`), mai "aggiustato" in silenzio.
 
 Il servo del gomito sta sulla torretta e muove la manovella. L'angolo della manovella è psi = phi + 180,
@@ -22,7 +22,8 @@ quindi **il servo gomito comanda direttamente phi**: la mappatura resta lineare 
 
 Parametri: `base_h = 40` (tavolo → faccia inferiore torretta), `sh_h = 62` (→ asse spalla), `L1 = 80`, `L2 = 80`,
 `L3 = 45` (perno polso → centro dita, orizzontale), `tcp_dz = −10` (quota delle dita rispetto al perno polso),
-`crank_r = 20`, `lev_r = 20`, `lev2_r = 20`.
+`crank_r = 20`, `lev_r = 20`, `lev2_r = 30`.
+`L3` e `tcp_dz` sono provvisori finché la pinza non è finita: la web app li legge da `rig.json` (`params`), che ha la precedenza sui default.
 
 - Mondo: origine sul tavolo nell'asse di yaw, **Z in alto**, X in avanti con q1 = 0.
 - Frame yaw: `Tz(base_h) · Rz(q1)`.
@@ -55,18 +56,21 @@ Così la X locale punta nella direzione `u(a)` e la Z locale va su +Y del mondo.
 | forearm | yaw | `P(E + (0,y,0), phi)` |
 | lev_link | yaw | `P(E + (0,y,0), 0)` (triangolo al gomito: orientamento costante) |
 | lev_rod2 | yaw | `P(E + lev2_r·u(90) + (0,y,0), phi)` |
-| wrist | yaw | `P(W + (0,y,0), 0)` (corpo pinza, livellato) |
+| wrist | yaw | `P(W + (0,y,0), 0)` (staffa + corpo pinza, livellato; y = 0) |
 | jaw_l / jaw_r | wrist | traslazione lungo la Z locale di `+g/2` / `−g/2` |
 
 `web/public/models/rig.json` (lo genera il CAD):
 
 ```json
 { "params": { "base_h": 40, "sh_h": 62, "L1": 80, "L2": 80, "L3": 45, "tcp_dz": -10,
-              "crank_r": 20, "lev_r": 20, "lev2_r": 20 },
-  "parts": [ { "name": "upper_arm", "file": "upper_arm.stl", "y": -23.4, "color": "#e8e8e8" } ] }
+              "crank_r": 20, "lev_r": 20, "lev2_r": 30 },
+  "parts": [ { "name": "upper_arm", "file": "upper_arm.stl", "y": -25.4, "color": "#e8e8e8" } ] }
 ```
 
 Una parte senza `file` o con file mancante viene disegnata come segnaposto (box) nello stesso frame.
+
+Piani `y` attuali: upper_arm −25.4, crank 18.1, drive_rod 9.0, lev_rod −3.0, forearm −18.9, lev_link −6.5,
+lev_rod2 −10.0, wrist 0.
 
 ## 3. Cinematica inversa (forma chiusa)
 
@@ -95,12 +99,13 @@ us = ref_us + k · (q − q_ref)          clamp finale del segnale a [500, 2500]
 | Campo | Significato | Default J0 / J1 / J2 / J3 |
 |---|---|---|
 | `ref_us` | impulso al riferimento | 1500 / 1500 / 1500 / 1500 |
-| `k` | µs per unità, il **segno** dà il verso | 11.11 / 11.11 / 11.11 / 31.83 |
+| `k` | µs per unità, il **segno** dà il verso | 11.11 / 11.11 / 11.11 / 19.89 |
 | `q_ref` | unità di giunto al riferimento | 0 / 90 / 0 / 29.5 |
 | `min`, `max` | limiti di giunto | vedi §1 |
 
 - SG90: 500–2500 µs corrispondono a 180°, cioè 11.11 µs/°.
-- Pinza: pignone con r = 10 mm, apertura = 2·r·Δθ, quindi 1 mm di apertura = 2.865° = 31.83 µs.
+- Pinza: pignone m1 z32 (r = 16 mm), apertura = 2·r·Δθ, quindi 1 mm di apertura = 1.79° = 19.89 µs.
+  La corsa completa di 59 mm richiede 106° di servo.
 
 **Procedura di taratura (UI):**
 1. `raw` porta il servo a un impulso esplicito.
