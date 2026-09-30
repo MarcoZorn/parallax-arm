@@ -1,0 +1,6 @@
+# 4 MB senza OTA: app 1.5 MB, il resto a LittleFS per la web app (Three.js + STL precompressi).
+# La label resta "spiffs": è quella che LittleFS.begin() cerca di default.
+# Name,   Type, SubType, Offset,   Size
+nvs,      data, nvs,     0x9000,   0x5000
+factory,  app,  factory, 0x10000,  0x180000
+spiffs,   data, spiffs,  0x190000, 0x270000
