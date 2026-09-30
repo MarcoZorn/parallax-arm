@@ -55,16 +55,20 @@ sg_horn_face = 30.5;
 // ---- torretta ----
 sh_h = 62;        // asse spalla sopra il fondo del pavimento torretta (z=0 = faccia squadretta base)
 cheek_t = 3;
-turret_w = 65;    // luce interna tra le guance
+turret_w = 69;    // luce interna tra le guance
 floor_t = 4;
-floor_r = 52;
+floor_r = 55;
+base_lip = [49.5, 51.0];   // labbro della base che entra nella gola sotto la torretta (guida radiale)
+base_hole_r = 48;          // apertura centrale della base: i cavi scendono dai fori della torretta
 horn_gap = sg_horn_face - (sg_tab_z + sg_tab_t) - cheek_t;  // guancia interna -> faccia squadretta (9.1)
 
 // ---- manovella gomito (parallelogramma) ----
 crank_r = 20;          // perno biella = leva posteriore avambraccio
 crank_t = 4;
-crank_spacer = 5;       // mozzo: stacca la piastra dalla squadretta per far stare la coppa lato guancia
-rod_t = 4;             // bielle (motrice e livellamento)
+crank_spacer = 3.3;     // mozzo: stacca la piastra dalla squadretta per far stare la coppa lato guancia
+rod_t = 4;             // bielle motrice e livellamento 1 (spessore)
+rod2_t = 3;            // biella livellamento 2
+rod_w = 6;             // larghezza corpo bielle (occhi d8)
 lev_r = 20;            // leva di livellamento: perno fisso G = asse spalla + (-lev_r, 0)
 
 // ---- piani lungo Y (0 = mezzeria torretta, guancia sinistra = servo spalla) ----
@@ -72,11 +76,20 @@ y_wall = turret_w / 2;
 y_arm = -y_wall + horn_gap;                          // faccia z=0 del braccio (lato servo)
 y_crank_hub = y_wall - horn_gap;                     // faccia squadretta manovella
 y_crank_in = y_crank_hub - crank_spacer - crank_t;   // faccia interna piastra manovella
-y_lev = [-3.0, 1.0];        // biella di livellamento
+y_lev = [-3.0, 1.0];        // biella di livellamento 1 (G -> triangolo)
 y_post = [1.5, 4.5];        // montante fisso che porta G
-y_rod = [5.0, 9.0];          // biella motrice
+y_rod = [9.0, 13.0];        // biella motrice
+// al gomito (avambraccio a U: piastra L + piastra R unite da un ponte)
+y_fore_l = [-18.8, -14.8];
+y_rod2 = [-10.5, -7.5];     // biella di livellamento 2 (triangolo U -> staffa polso V)
+y_link = [-7.0, -3.5];      // triangolo di livellamento al gomito (dadi P1/U incassati)
+y_fore_r = [4.5, 8.5];      // piastra R con la leva B (dado B incassato sul lato -y)
+y_bracket = [-7.0, 4.0];    // staffa polso tra le piastre; la sua leva V sta in y_link
+// limiti di giunto derivati dai piani (verificati in assembly.scad)
+lim_phi = [-70, 70];
+lim_e = [20, 150];          // th2 - phi
 
 // ---- quote globali per firmware/web (docs/03-protocollo.md) ----
 base_h = 40;      // tavolo -> faccia inferiore torretta (= faccia squadretta del servo base)
 tcp_dz = -10;     // quota del centro dita rispetto al perno polso
-lev2_r = 20;      // leva del secondo parallelogramma di livellamento (verso l'alto al gomito)
+lev2_r = 30;      // leva del secondo parallelogramma di livellamento (verso l'alto al gomito)

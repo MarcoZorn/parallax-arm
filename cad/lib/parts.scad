@@ -30,3 +30,14 @@ module engrave(p, z, s, size = 3) {
 // Sede a stadio per un piombo a oliva, asse lungo X, centrata; o = offset (parete/coperchio).
 module lead_outline(o = 0) offset(r = o) hull()
     for (s = [-1, 1]) translate([s * (lead_pocket[0] - lead_pocket[1]) / 2, 0]) circle(d = lead_pocket[1]);
+
+// SG90 solo visivo (twin/anteprime). Frame servo: fondo a z=0, albero in (0,0) verso +z, corpo lungo X verso -X.
+module sg90_model() {
+    x0 = -(sg_body.x - sg_shaft_x);
+    color("#1f4fa8") {
+        translate([x0, -sg_body.y / 2, 0]) cube(sg_body);
+        translate([x0 - (sg_tab_len - sg_body.x) / 2, -sg_body.y / 2, sg_tab_z]) cube([sg_tab_len, sg_body.y, sg_tab_t]);
+        cylinder(d = sg_boss_d, h = sg_body.z + sg_boss_h);
+    }
+    color("White") cylinder(d = 4.6, h = sg_horn_face - horn_t);
+}
