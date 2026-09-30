@@ -1,5 +1,5 @@
 // Manovella gomito: sul servo gomito (guancia destra), porta il perno A della biella motrice
-// e il blocco contrappeso con 4 piombi da 20 g ad arco (r = cw_elbow_r).
+// e il blocco contrappeso: 6 sedi per piombi da 20 g ad arco (r = cw_elbow_r). Se ne riempiono 4 o 6 (calc/torque.py).
 // Il blocco sta dal lato servo: baricentro a 1-2 mm dal piano della squadretta, quindi minimo momento sull'albero.
 // Frame locale: asse spalla nell'origine, raggio della manovella verso +X, +Z verso la guancia (servo).
 // Stampa: faccia z=0 (interna) sul piatto; le sedi piombi si aprono sul piatto, il tetto è un ponte da 14 mm.
@@ -7,8 +7,8 @@
 // Montaggio:
 //  1. squadretta nella tasca in cima al mozzo, poi innesto sul servo con la manovella opposta all'avambraccio;
 //  2. vite centrale dalla faccia z=0 (lamatura profonda);
-//  3. 4 piombi nelle sedi, coperchio (part="lid") sulla faccia z=0, 2 viti M3x16 con dado in sede lato servo;
-//  4. perno A: vite M3x25 dal lato servo -> piastra -> distanziale -> biella -> dado autobloccante.
+//  3. piombi nelle sedi (prima le 4 centrali), coperchio (part="lid") sulla faccia z=0, 2 viti M3x16 con dado lato servo;
+//  4. perno A: vite M3x20 dal lato servo -> piastra -> distanziale -> biella (dado incassato nella biella).
 include <params.scad>
 use <lib/parts.scad>
 
@@ -16,16 +16,18 @@ part = "all";  // all | crank | lid | spacer
 
 hub_h = crank_t + crank_spacer;
 step = 2 * asin((lead_pocket[1] + 2) / 2 / cw_elbow_r);  // sedi affiancate con setto di 2 mm
-angles = [-1.5, -0.5, 0.5, 1.5] * step;
+angles = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5] * step;
 screws = [for (s = [-1, 1]) 26 * [cos(s * 1.5 * step), sin(s * 1.5 * step)]];
 spacer_len = y_crank_in - y_rod[1] - 0.2;  // dalla faccia interna della piastra al piano della biella
-echo(str("baricentro piombi r = ", cw_elbow_r * (cos(0.5 * step) + cos(1.5 * step)) / 2, " mm (calc: R_CW_ELBOW)"));
+echo(str("baricentro piombi: 4 centrali r = ", cw_elbow_r * (cos(0.5 * step) + cos(1.5 * step)) / 2,
+          " mm, tutti e 6 r = ", cw_elbow_r * (cos(0.5 * step) + cos(1.5 * step) + cos(2.5 * step)) / 3, " mm (calc: R_CW_ELBOW*)"));
 
 module lead_at(a, o) rotate(a) translate([cw_elbow_r, 0]) lead_outline(o);
+// Solo inviluppi di sedi adiacenti: un inviluppo unico chiuderebbe l'arco e coprirebbe il perno A.
 module block_outline(o) {
-    hull() for (a = angles) lead_at(a, o);
-    for (i = [0, 1]) hull() {  // orecchie delle viti, attaccate alla sede esterna più vicina
-        lead_at(angles[i * 3], o);
+    for (i = [0:len(angles) - 2]) hull() { lead_at(angles[i], o); lead_at(angles[i + 1], o); }
+    for (i = [0, 1]) hull() {  // orecchie delle viti, attaccate alla sede alla stessa quota angolare
+        lead_at(angles[1 + i * 3], o);
         translate(screws[i]) circle(r = 4);
     }
 }
