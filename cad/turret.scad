@@ -58,6 +58,8 @@ module turret() {
             cylinder(r = groove[0], h = groove[2] + 3, $fn = 128);
         }
         for (p = cable_holes) translate([p.x, p.y, -1]) cylinder(d = 8, h = floor_t + 2);
+        // 4 finestre di alleggerimento: fuori da montante G, guance, gola della corona e squadretta
+        for (sx = [-1, 1], sy = [-1, 1]) translate([sx * 32, sy * 16, -1]) cylinder(d = 18, h = floor_t + 2);
     }
     cheek(-1);
     cheek(1);
