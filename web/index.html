@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#131517" />
+  <title>BRACCIO · Digital twin</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23ff7a1a'/%3E%3Cpath d='M4 12 7 6l5 1' stroke='%23131517' stroke-width='2' fill='none'/%3E%3C/svg%3E" />
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <div><b>BRACCIO</b><span class="sub">Digital twin · 4 assi SG90</span></div>
+    </div>
+    <div class="flags" aria-live="polite">
+      <span id="fMode" class="flag sim">SIMULAZIONE</span>
+      <span id="fEn" class="flag">—</span>
+      <span id="fMov" class="flag">—</span>
+    </div>
+    <div class="actions">
+      <button id="bEnable" class="btn">Abilita</button>
+      <button id="bStop" class="btn">Stop</button>
+      <button id="bEstop" class="estop" aria-keyshortcuts="Escape Space">E-STOP<small>Esc · Spazio</small></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="view" aria-label="Vista 3D del braccio">
+      <div id="gl" class="gl"></div>
+      <div class="hud hud-tl">
+        <div class="hud-title">TCP</div>
+        <dl class="ro3">
+          <dt>X</dt><dd id="hX">—</dd><dt>Y</dt><dd id="hY">—</dd><dt>Z</dt><dd id="hZ">—</dd>
+        </dl>
+        <div class="hud-title">Giunti <span id="hSrc" class="muted">sim</span></div>
+        <table class="hudq" aria-label="Giunti">
+          <tbody id="hQ"></tbody>
+        </table>
+        <div id="hPar" class="par">th2−phi —</div>
+        <p id="hNote" class="hud-note" hidden>Stato comandato: gli SG90 non hanno retroazione.</p>
+      </div>
+      <div class="hud hud-bl" role="group" aria-label="Opzioni vista">
+        <label class="tog"><input type="checkbox" id="tEnv" /> Inviluppo</label>
+        <label class="tog"><input type="checkbox" id="tTrace" checked /> Traccia</label>
+        <label class="tog"><input type="checkbox" id="tGizmo" checked /> Gizmo IK</label>
+        <button id="bClearTrace" class="btn sm">Pulisci traccia</button>
+        <button id="bView" class="btn sm">Vista</button>
+      </div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <aside class="panel">
+      <section class="block" aria-label="Moto">
+        <div class="row">
+          <label for="vR">Velocità <span class="muted">v</span></label>
+          <input type="range" id="vR" min="0.05" max="1" step="0.05" value="0.5" />
+          <output id="vO" for="vR" class="mono">50%</output>
+        </div>
+        <div class="row">
+          <label for="gR">Pinza <span class="muted">mm</span></label>
+          <input type="range" id="gR" min="0" max="59" step="0.5" />
+          <input type="number" id="gN" min="0" max="59" step="0.5" class="num" aria-label="Apertura pinza in mm" />
+        </div>
+        <div class="row btns">
+          <button id="bOpen" class="btn">Apri</button>
+          <button id="bClose" class="btn">Chiudi</button>
+        </div>
+      </section>
+
+      <nav class="tabs" role="tablist" aria-label="Pannelli">
+        <button role="tab" id="tab-fk" aria-controls="p-fk" aria-selected="true">FK</button>
+        <button role="tab" id="tab-ik" aria-controls="p-ik" aria-selected="false" tabindex="-1">IK</button>
+        <button role="tab" id="tab-wp" aria-controls="p-wp" aria-selected="false" tabindex="-1">Waypoint</button>
+        <button role="tab" id="tab-cal" aria-controls="p-cal" aria-selected="false" tabindex="-1">Taratura</button>
+        <button role="tab" id="tab-net" aria-controls="p-net" aria-selected="false" tabindex="-1">Connessione</button>
+      </nav>
+
+      <section role="tabpanel" id="p-fk" aria-labelledby="tab-fk" class="tp">
+        <p class="hint">Cinematica diretta: target per giunto. A destra il valore attuale.</p>
+        <div id="fkRows"></div>
+        <div id="fkPar" class="par">th2 − phi = — <span class="muted">(vincolo 20…160)</span></div>
+        <div class="row btns"><button id="bHome" class="btn">Vai a home</button></div>
+      </section>
+
+      <section role="tabpanel" id="p-ik" aria-labelledby="tab-ik" class="tp" hidden>
+        <p class="hint">Cinematica inversa: TCP nel mondo (mm, Z in alto). Trascina il gizmo nella vista per risolvere dal vivo.</p>
+        <form id="ikForm" class="xyz">
+          <label>X <input type="number" id="ikX" step="0.5" class="num" /></label>
+          <label>Y <input type="number" id="ikY" step="0.5" class="num" /></label>
+          <label>Z <input type="number" id="ikZ" step="0.5" class="num" /></label>
+          <button class="btn primary" type="submit">Vai</button>
+        </form>
+        <div id="ikMsg" class="msg" role="status">—</div>
+        <div class="sep">Jog cartesiano</div>
+        <div class="row">
+          <label for="jogStep">Passo</label>
+          <select id="jogStep">
+            <option value="0.5">0.5 mm</option><option value="1">1 mm</option><option value="5" selected>5 mm</option>
+            <option value="10">10 mm</option><option value="20">20 mm</option>
+          </select>
+        </div>
+        <div class="jog" role="group" aria-label="Jog cartesiano">
+          <button class="btn" data-jog="0,-1">−X</button><button class="btn" data-jog="0,1">+X</button>
+          <button class="btn" data-jog="1,-1">−Y</button><button class="btn" data-jog="1,1">+Y</button>
+          <button class="btn" data-jog="2,-1">−Z</button><button class="btn" data-jog="2,1">+Z</button>
+        </div>
+      </section>
+
+      <section role="tabpanel" id="p-wp" aria-labelledby="tab-wp" class="tp" hidden>
+        <form id="wpForm" class="row">
+          <label for="wpName" class="sr">Nome waypoint</label>
+          <input type="text" id="wpName" placeholder="Nome waypoint" maxlength="40" />
+          <button class="btn primary" type="submit">Salva posa</button>
+        </form>
+        <ol id="wpList" class="list" aria-label="Waypoint"></ol>
+        <div class="sep">Sequenza</div>
+        <ol id="seqList" class="list" aria-label="Passi della sequenza"></ol>
+        <div class="row btns">
+          <button id="bSeqAdd" class="btn">+ Passo</button>
+          <button id="bPlay" class="btn primary">Play</button>
+          <button id="bSeqStop" class="btn">Stop</button>
+          <label class="tog"><input type="checkbox" id="seqLoop" /> Loop</label>
+        </div>
+        <div class="row btns">
+          <button id="bExport" class="btn">Esporta JSON</button>
+          <label class="btn file">Importa JSON<input type="file" id="fImport" accept="application/json,.json" /></label>
+        </div>
+      </section>
+
+      <section role="tabpanel" id="p-cal" aria-labelledby="tab-cal" class="tp" hidden>
+        <p class="hint">us = ref_us + k·(q − q_ref). Il segno di k dà il verso. <code>raw</code> funziona solo con il braccio abilitato.</p>
+        <div class="row">
+          <label for="calJ">Giunto</label>
+          <select id="calJ"></select>
+          <span class="mono muted">attuale <b id="calUs">—</b> µs</span>
+        </div>
+        <div class="row">
+          <label for="rawUs">Impulso</label>
+          <input type="number" id="rawUs" min="500" max="2500" step="1" value="1500" class="num" />
+          <button id="bRaw" class="btn">Invia raw</button>
+        </div>
+        <div class="jog six" role="group" aria-label="Jog impulso">
+          <button class="btn" data-us="-50">−50</button><button class="btn" data-us="-10">−10</button><button class="btn" data-us="-1">−1</button>
+          <button class="btn" data-us="1">+1</button><button class="btn" data-us="10">+10</button><button class="btn" data-us="50">+50</button>
+        </div>
+        <div class="row btns">
+          <button id="bRef" class="btn">ref_us ← impulso</button>
+          <label for="kAng" class="muted">2° punto</label>
+          <input type="number" id="kAng" step="0.5" class="num" aria-label="Angolo noto del secondo punto" />
+          <button id="bK" class="btn">k ← impulso</button>
+        </div>
+        <table class="cal">
+          <thead><tr><th scope="col">J</th><th scope="col">ref_us</th><th scope="col">k</th><th scope="col">q_ref</th><th scope="col">min</th><th scope="col">max</th></tr></thead>
+          <tbody id="calRows"></tbody>
+        </table>
+        <div class="row btns">
+          <button id="bCalGet" class="btn">Leggi</button>
+          <button id="bCalSet" class="btn primary">Invia (cal_set)</button>
+          <button id="bCalSave" class="btn">Salva NVS</button>
+          <button id="bHomeSet" class="btn">Home ← posa</button>
+        </div>
+        <div class="sep">Taratura sul device</div>
+        <pre id="calDev" class="dev">— non letta —</pre>
+      </section>
+
+      <section role="tabpanel" id="p-net" aria-labelledby="tab-net" class="tp" hidden>
+        <form id="netForm" class="row">
+          <label for="wsUrl">URL</label>
+          <input type="text" id="wsUrl" value="ws://braccio.local/ws" spellcheck="false" />
+          <button id="bConn" class="btn primary" type="submit">Connetti</button>
+        </form>
+        <dl class="kv">
+          <dt>Stato</dt><dd id="nState">disconnesso</dd>
+          <dt>Firmware</dt><dd id="nFw">—</dd>
+          <dt>Rete</dt><dd id="nMode">—</dd>
+        </dl>
+        <p class="hint">Non connesso: il twin simula il profilo trapezoidale del firmware. Connesso: il twin segue gli <code>state</code> del device, cioè lo stato <b>comandato</b> (gli SG90 non hanno retroazione).</p>
+        <div class="sep">Log</div>
+        <ol id="log" class="log" aria-live="polite"></ol>
+      </section>
+    </aside>
+  </main>
+</body>
+</html>
