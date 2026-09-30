@@ -1,0 +1,6 @@
+.directory
+__pycache__/
+firmware/.pio/
+firmware/include/secrets.h
+web/node_modules/
+web/dist/
