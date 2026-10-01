@@ -62,15 +62,15 @@ Così la X locale punta nella direzione `u(a)` e la Z locale va su +Y del mondo.
 `web/public/models/rig.json` (lo genera il CAD):
 
 ```json
-{ "params": { "base_h": 40, "sh_h": 62, "L1": 80, "L2": 80, "L3": 45, "tcp_dz": -10,
+{ "params": { "base_h": 40, "sh_h": 62, "L1": 80, "L2": 80, "L3": 42, "tcp_dz": -24,
               "crank_r": 20, "lev_r": 20, "lev2_r": 30 },
   "parts": [ { "name": "upper_arm", "file": "upper_arm.stl", "y": -25.4, "color": "#e8e8e8" } ] }
 ```
 
 Una parte senza `file` o con file mancante viene disegnata come segnaposto (box) nello stesso frame.
 
-Piani `y` attuali: upper_arm −25.4, crank 18.1, drive_rod 9.0, lev_rod −3.0, forearm −18.9, lev_link −6.5,
-lev_rod2 −10.0, wrist 0.
+Piani `y` attuali: upper_arm −25.4, crank 18.1, drive_rod 9.0, lev_rod −3.0, forearm −18.8, lev_link −7.0,
+lev_rod2 −10.5, wrist 0.
 
 ## 3. Cinematica inversa (forma chiusa)
 
@@ -118,13 +118,17 @@ us = ref_us + k · (q − q_ref)          clamp finale del segnale a [500, 2500]
 - Loop di controllo a 50 Hz, uno per frame servo.
 - Profilo **trapezoidale sincronizzato**: tutti i giunti partono e arrivano insieme, scalati sul giunto più lento.
 - Limiti: `vmax` 90 °/s (pinza 60 mm/s), `amax` 180 °/s² (pinza 120 mm/s²), moltiplicati per il fattore `v` ∈ (0, 1] del comando.
-- Un nuovo `move` durante il moto riparte dalla posizione e velocità correnti. Il nuovo profilo può partire da velocità non nulla; in alternativa si ferma e riparte, purché il risultato sia senza scatti.
+- Un nuovo `move` durante il moto riparte dalla posizione e velocità correnti, senza fermarsi.
+- **Bordi morbidi:** vicino ai limiti di giunto e al vincolo th2 − phi il planner frena in tempo, invece di fermare il giunto di colpo. L'ultima difesa interviene a 0.01 oltre i bordi.
+- **Tolleranza 0.001** su limiti e vincolo: un target sul bordo, arrotondato a 0.01 dal browser, non viene rifiutato per errore di float.
+- **Il twin della web app (`web/src/motion.js`) è una copia riga per riga del planner del firmware**: scarto ≤ 0.004° su 6000 scenari (`sim/software`).
 - **La sicurezza sta sul device:** limiti, vincolo del parallelogramma e clamp dei µs sono applicati sempre, qualunque cosa mandi il browser.
 - Boot:
   - PWM **non** agganciato: servo senza coppia, linee tenute basse dai pull-down.
-  - `enable` aggancia il PWM alla posa `home` salvata in NVS (default `[0, 90, 0, 30]`). Il braccio va lasciato vicino a `home` prima di spegnere.
+  - `enable` aggancia il PWM alla posa `home` salvata in NVS (default `[0, 90, 0, 30]`), **un servo ogni 200 ms**: picco di spunto ~1.7 A invece di ~2.7 A.
+    Durante l'aggancio, per circa 0.6 s, `move` e `raw` rispondono `err` "enable in corso". Il braccio va lasciato vicino a `home` prima di spegnere.
 - Watchdog: se l'ultimo client WebSocket si disconnette durante un moto → `stop` (decelera e tiene la posizione).
-- `estop`: sgancia subito il PWM (servo liberi) e mette `enabled = false`.
+- `estop`: sgancia subito il PWM (servo liberi), mette `enabled = false` e **scarta i comandi ancora in coda**, così niente di arrivato prima viene eseguito dopo.
 
 ## 6. Rete
 
@@ -141,13 +145,13 @@ us = ref_us + k · (q − q_ref)          clamp finale del segnale a [500, 2500]
 
 | Messaggio | Effetto |
 |---|---|
-| `{"t":"move","q":[q1,th2,phi,g],"v":0.5}` | moto sincronizzato verso il target (validato) |
+| `{"t":"move","q":[q1,th2,phi,g],"v":0.5}` | moto sincronizzato verso il target (validato); `v` assente = 0.5, di tipo sbagliato = rifiutato |
 | `{"t":"stop"}` | decelera e tiene la posizione |
 | `{"t":"estop"}` | PWM sganciato subito |
 | `{"t":"enable"}` | aggancia il PWM alla posa corrente o `home` |
-| `{"t":"raw","j":1,"us":1500}` | taratura: impulso diretto a un giunto (clamp 500–2500), solo se enabled |
+| `{"t":"raw","j":1,"us":1500}` | taratura: impulso diretto a un giunto (clamp 500–2500), solo se enabled e fermo; rifiutato se viola il vincolo th2 − phi |
 | `{"t":"cal_get"}` | risponde `cal` |
-| `{"t":"cal_set","cal":[{ref_us,k,q_ref,min,max}×4]}` | aggiorna la taratura in RAM |
+| `{"t":"cal_set","cal":[{ref_us,k,q_ref,min,max}×4]}` | aggiorna la taratura in RAM; `min`/`max` non possono uscire dai limiti meccanici |
 | `{"t":"cal_save"}` | salva la taratura in NVS |
 | `{"t":"home_set"}` | salva la posa corrente come `home` |
 
