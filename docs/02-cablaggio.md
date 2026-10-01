@@ -88,3 +88,44 @@ E-stop:
 3. Condensatore con la banda "–" verso il GND.
 4. GND dell'ESP32 collegato al WAGO GND.
 5. Primo avvio con le **squadrette smontate**: il firmware porta i servo al centro (1500 µs), poi si montano braccio e manovella nella posizione di taratura.
+
+## Montare l'ESP32 nella base
+
+![Vano elettronica](img/base_electronics.png)
+
+1. **Prima collega i Dupont femmina** ai pin che servono: GPIO 33, 25, 26, 27, GND e (se standalone) 5V.
+   Piega i fili di 90° appena fuori dal connettore: sotto la scheda ci sono circa 6 mm.
+2. Orienta la scheda con **i pin verso il basso** e la **micro-USB verso la parete posteriore** (−X), dove c'è l'apertura per il cavo.
+3. Appoggiala sui due supporti ai lati corti e **premi al centro**: i due ganci sui lati lunghi scattano sul bordo del PCB.
+   Per toglierla allarga leggermente i ganci con un dito.
+4. Il cavo USB della porta A del caricatore entra dall'apertura della parete e alimenta l'ESP32.
+   Lo stesso cavo serve per caricare il firmware.
+
+## Percorso dei cavi e lunghezze
+
+![Percorso cavi](img/cable_routing.png)
+
+Il **fascio rosso** comprende i 3 fili del servo pinza e, se c'è, il 5V/GND della ESP32-CAM. Il percorso:
+1. Dal servo pinza alla staffa del polso, con una fascetta attorno al braccetto.
+2. Sulla **faccia esterna della piastra L** dell'avambraccio, con 2 fascette nelle asole.
+3. Un'**ansa fuori dal gomito**, lato esterno, oltre la testa della vite.
+4. Nella **canalina del braccio**, sul lato servo: il cavo si infila di taglio sotto i 3 ponticelli.
+5. Nello spazio tra squadretta e guancia sinistra, con un'ansa di servizio di circa 4 cm.
+6. **Asola della guancia sinistra**: il cavo entra di lato, il connettore non deve passare.
+7. Giù fuori dalla guancia, poi nell'**asola del pavimento** della torretta.
+8. Nella base, attraverso l'apertura centrale.
+9. Ansa di yaw di circa 14 cm per i ±90° della base, poi **fascetta all'ancoraggio** nel fondo, accanto alla torre.
+10. Breadboard e WAGO.
+
+I **servo di spalla e gomito** scendono dal fondo del corpo fino alle asole del pavimento, una per lato, e poi seguono lo stesso percorso nella base.
+
+| Cavo | Percorso misurato (pose peggiori) | Disponibile | Cosa serve |
+|---|---|---|---|
+| Servo pinza | 342 mm sul braccio + 141 ansa yaw + 110 nella base + 40 margine = **~63 cm** | SG90 25 cm | **2 jumper in catena**: maschio-femmina 20 cm + maschio-maschio 20 cm (o una prolunga servo da 30 cm) |
+| ESP32-CAM 5V/GND | come sopra, ~63 cm | — | 3 jumper femmina-maschio in catena per filo; l'ultimo maschio va spelato nel WAGO |
+| Servo spalla / gomito | 68 + 141 + 110 = **~32 cm** | SG90 25 cm + jumper 20 cm | il jumper maschio-maschio del cablaggio normale basta |
+| Servo base | nella torre | SG90 25 cm | esce dall'asola in basso della torre |
+
+Fra le pose estreme il fascio della pinza cambia lunghezza di soli **30 mm**: bastano le anse a gomito e spalla, non serve un cavo a spirale.
+
+Fissa i giunti tra i Dupont con un giro di nastro, così non si sfilano quando il braccio si muove.
