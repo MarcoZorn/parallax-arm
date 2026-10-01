@@ -3737,6 +3737,20 @@ solid OpenSCAD_Model
       vertex 11.9325 1.58598 0
     endloop
   endfacet
+  facet normal -0.903982 0.427572 0
+    outer loop
+      vertex 7.6903 0.956708 0
+      vertex 7.7952 1.17849 7.8
+      vertex 7.7952 1.17849 0
+    endloop
+  endfacet
+  facet normal -0.903982 0.427572 0
+    outer loop
+      vertex 7.7952 1.17849 7.8
+      vertex 7.6903 0.956708 0
+      vertex 7.6903 0.956708 7.8
+    endloop
+  endfacet
   facet normal -0.671548 0.740961 0
     outer loop
       vertex 8.41402 1.93253 0
@@ -3777,20 +3791,6 @@ solid OpenSCAD_Model
       vertex 11.3889 2.07867 7.8
       vertex 11.586 1.93253 0
       vertex 11.3889 2.07867 0
-    endloop
-  endfacet
-  facet normal 0.336879 -0.941548 0
-    outer loop
-      vertex 10.7257 -2.39235 0
-      vertex 10.9567 -2.3097 7.8
-      vertex 10.7257 -2.39235 7.8
-    endloop
-  endfacet
-  facet normal 0.336879 -0.941548 0
-    outer loop
-      vertex 10.9567 -2.3097 7.8
-      vertex 10.7257 -2.39235 0
-      vertex 10.9567 -2.3097 0
     endloop
   endfacet
   facet normal -0.146732 -0.989176 0
@@ -4101,6 +4101,20 @@ solid OpenSCAD_Model
       vertex 12.0787 1.38893 0
     endloop
   endfacet
+  facet normal -0.595693 -0.803212 0
+    outer loop
+      vertex 8.41402 -1.93253 0
+      vertex 8.61107 -2.07867 7.8
+      vertex 8.41402 -1.93253 7.8
+    endloop
+  endfacet
+  facet normal -0.595693 -0.803212 -0
+    outer loop
+      vertex 8.61107 -2.07867 7.8
+      vertex 8.41402 -1.93253 0
+      vertex 8.61107 -2.07867 0
+    endloop
+  endfacet
   facet normal -0.970034 0.242971 0
     outer loop
       vertex 7.54804 0.487725 0
@@ -4113,6 +4127,20 @@ solid OpenSCAD_Model
       vertex 7.60765 0.725711 7.8
       vertex 7.54804 0.487725 0
       vertex 7.54804 0.487725 7.8
+    endloop
+  endfacet
+  facet normal -0.514094 -0.857734 0
+    outer loop
+      vertex 8.61107 -2.07867 0
+      vertex 8.82151 -2.2048 7.8
+      vertex 8.61107 -2.07867 7.8
+    endloop
+  endfacet
+  facet normal -0.514094 -0.857734 -0
+    outer loop
+      vertex 8.82151 -2.2048 7.8
+      vertex 8.61107 -2.07867 0
+      vertex 8.82151 -2.2048 0
     endloop
   endfacet
   facet normal 0.0490836 -0.998795 0
@@ -4141,20 +4169,6 @@ solid OpenSCAD_Model
       vertex 10.4877 2.45196 7.8
       vertex 10.7257 2.39235 0
       vertex 10.4877 2.45196 0
-    endloop
-  endfacet
-  facet normal -0.595693 -0.803212 0
-    outer loop
-      vertex 8.41402 -1.93253 0
-      vertex 8.61107 -2.07867 7.8
-      vertex 8.41402 -1.93253 7.8
-    endloop
-  endfacet
-  facet normal -0.595693 -0.803212 -0
-    outer loop
-      vertex 8.61107 -2.07867 7.8
-      vertex 8.41402 -1.93253 0
-      vertex 8.61107 -2.07867 0
     endloop
   endfacet
   facet normal 0.146726 0.989177 -0
@@ -5235,18 +5249,18 @@ solid OpenSCAD_Model
       vertex 7.54804 -0.487725 7.8
     endloop
   endfacet
-  facet normal -0.903982 0.427572 0
+  facet normal 0.336879 -0.941548 0
     outer loop
-      vertex 7.6903 0.956708 0
-      vertex 7.7952 1.17849 7.8
-      vertex 7.7952 1.17849 0
+      vertex 10.7257 -2.39235 0
+      vertex 10.9567 -2.3097 7.8
+      vertex 10.7257 -2.39235 7.8
     endloop
   endfacet
-  facet normal -0.903982 0.427572 0
+  facet normal 0.336879 -0.941548 0
     outer loop
-      vertex 7.7952 1.17849 7.8
-      vertex 7.6903 0.956708 0
-      vertex 7.6903 0.956708 7.8
+      vertex 10.9567 -2.3097 7.8
+      vertex 10.7257 -2.39235 0
+      vertex 10.9567 -2.3097 0
     endloop
   endfacet
   facet normal 0.242958 -0.970037 0
@@ -5317,20 +5331,6 @@ solid OpenSCAD_Model
       vertex 8.23223 1.76777 7.8
       vertex 8.06747 1.58598 0
       vertex 8.06747 1.58598 7.8
-    endloop
-  endfacet
-  facet normal -0.514094 -0.857734 0
-    outer loop
-      vertex 8.61107 -2.07867 0
-      vertex 8.82151 -2.2048 7.8
-      vertex 8.61107 -2.07867 7.8
-    endloop
-  endfacet
-  facet normal -0.514094 -0.857734 -0
-    outer loop
-      vertex 8.82151 -2.2048 7.8
-      vertex 8.61107 -2.07867 0
-      vertex 8.82151 -2.2048 0
     endloop
   endfacet
   facet normal -0.242977 -0.970032 0
