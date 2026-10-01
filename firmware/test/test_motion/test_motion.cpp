@@ -98,6 +98,18 @@ static void check_run(const Run& r, float f, float a_scale) {
     }
 }
 
+static void test_cal_bounds() {
+    Cal c[NJ];
+    cal_default(c);
+    char err[64];
+    TEST_ASSERT_TRUE(check_cal(c, err, sizeof err));
+    c[1].max = Q_MAX[1] + 5;  // limiti oltre la meccanica: rifiutati
+    TEST_ASSERT_FALSE(check_cal(c, err, sizeof err));
+    cal_default(c);
+    c[3].min = Q_MIN[3] - 1;
+    TEST_ASSERT_FALSE(check_cal(c, err, sizeof err));
+}
+
 static void test_planner_sync() {
     const float home[NJ] = {0, 90, 0, 30}, tgt[NJ] = {60, 130, 40, 10};
     for (float f : (const float[]){1.0f, 0.5f, 0.2f}) {
@@ -148,6 +160,7 @@ int main() {
     RUN_TEST(test_mapping);
     RUN_TEST(test_limits);
     RUN_TEST(test_constraint);
+    RUN_TEST(test_cal_bounds);
     RUN_TEST(test_planner_sync);
     RUN_TEST(test_retarget);
     RUN_TEST(test_stop);

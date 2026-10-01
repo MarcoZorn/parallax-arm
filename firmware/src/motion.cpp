@@ -38,7 +38,8 @@ bool check_cal(const Cal cal[NJ], char* err, size_t n) {
     for (int j = 0; j < NJ; j++) {
         const Cal& c = cal[j];
         bool ok = isfinite(c.ref_us) && isfinite(c.k) && isfinite(c.q_ref) && isfinite(c.min) && isfinite(c.max) &&
-                  c.ref_us >= US_MIN && c.ref_us <= US_MAX && fabsf(c.k) >= 1 && c.min < c.max;
+                  c.ref_us >= US_MIN && c.ref_us <= US_MAX && fabsf(c.k) >= 1 && c.min < c.max &&
+                  c.min >= Q_MIN[j] - 0.001f && c.max <= Q_MAX[j] + 0.001f;  // mai oltre i limiti meccanici (assembly.scad)
         if (!ok) {
             snprintf(err, n, "taratura non valida: giunto %d", j);
             return false;
