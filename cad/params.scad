@@ -13,7 +13,7 @@ snap_hook = 0.4;   // sporgenza dente a scatto (interferenza)
 // ---- geometria braccio ----
 L1 = 80;   // spalla -> gomito
 L2 = 80;   // gomito -> perno polso
-L3 = 45;   // perno polso -> centro dita
+L3 = 42;   // perno polso -> centro dita (= xp in wrist.scad)
 
 // ---- SG90 (misura il tuo e correggi) ----
 sg_body   = [22.8, 12.4, 22.7];  // x lungo, y largo, z alto (senza linguette/perno)
@@ -92,5 +92,5 @@ lim_e = [20, 150];          // th2 - phi
 
 // ---- quote globali per firmware/web (docs/03-protocollo.md) ----
 base_h = 40;      // tavolo -> faccia inferiore torretta (= faccia squadretta del servo base)
-tcp_dz = -10;     // quota del centro dita rispetto al perno polso
+tcp_dz = -24;     // quota del centro dita rispetto al perno polso (= tcp_z in wrist.scad)
 lev2_r = 30;      // leva del secondo parallelogramma di livellamento (verso l'alto al gomito)

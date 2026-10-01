@@ -5,3 +5,5 @@ firmware/include/secrets.h
 web/node_modules/
 web/dist/
 firmware/data/
+sim/.venv/
+sim/**/__pycache__/
