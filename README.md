@@ -8,7 +8,7 @@ Lo pilota un ESP32 e si controlla da una web app locale con digital twin 3D.
 | | |
 |---|---|
 | Assi | base, spalla, gomito + pinza parallela; pinza **sempre orizzontale** (doppio parallelogramma) |
-| Sbraccio | 202 mm dall'asse spalla |
+| Sbraccio | 188 mm dall'asse spalla (th2 − phi ≥ 35°) |
 | Payload | 50 g anche con la ESP32-CAM montata (SF ≥ 2 sulla coppia di stallo: `calc/` + simulazione MuJoCo in `sim/`) |
 | Pinza | cremagliera simmetrica, corsa 0–59 mm |
 | Motori | 4 × SG90 180°: spalla e gomito sulla torretta, contrappesi con piombi da pesca |
@@ -63,7 +63,14 @@ Senza hardware: `cd web && npm install && npm run dev`. La web app gira in simul
 python3 calc/torque.py                    # punti di progetto delle coppie
 cd firmware && pio test -e native         # planner, limiti, mappatura µs
 cd web && npm test                        # FK/IK andata e ritorno, profilo di moto
+cad/check_grid.sh                         # collisioni su tutta la griglia di pose (lento)
+sim/software/run_all.sh                   # firmware = twin, fuzz, protocollo end-to-end, UI
+python3 sim/structural/run_all.py         # strutture, perni, ingranaggi, tolleranze (Monte Carlo)
+python3 sim/electrical/run_all.py         # alimentazione nel tempo
+sim/.venv/bin/python sim/dynamics/run_all.py   # dinamica MuJoCo (python3 -m venv sim/.venv && sim/.venv/bin/pip install mujoco numpy scipy matplotlib)
 ```
+
+Esiti e limiti: [docs/05-verifiche.md](docs/05-verifiche.md).
 
 ## Documenti
 
@@ -71,6 +78,7 @@ cd web && npm test                        # FK/IK andata e ritorno, profilo di m
 - [02 — Cablaggio senza saldature](docs/02-cablaggio.md)
 - [03 — Cinematica, taratura e protocollo](docs/03-protocollo.md)
 - [04 — Stampa, ferramenta e montaggio](docs/04-stampa-e-montaggio.md)
+- [05 — Verifiche e simulazioni](docs/05-verifiche.md): dinamica MuJoCo, strutture e tolleranze, alimentazione, software
 
 ## Licenza
 

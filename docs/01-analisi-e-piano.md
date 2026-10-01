@@ -44,7 +44,7 @@ Si usa quindi la **topologia parallela** (famiglia MeArm/EEZYbot):
 Dimensioni:
 - L1 = L2 = 80 mm.
 - TCP (centro delle dita) 42 mm avanti e 24 mm sotto il perno del polso.
-- Sbraccio orizzontale **202 mm** dall'asse della spalla.
+- Sbraccio orizzontale **188 mm** dall'asse della spalla, con il vincolo th2 − phi ≥ 35° (sotto, il parallelogramma amplifica la cedevolezza: [05-verifiche.md](05-verifiche.md)).
 - Asse della spalla a 102 mm dal tavolo.
 - Polso roll escluso: servirebbe un contrappeso che non c'è.
 
