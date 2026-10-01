@@ -55,7 +55,7 @@ La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio col
 | M3x14 | 1 | A (manovella → distanziale → biella motrice, dado incassato) |
 | M3x16 | 4 | coperchi dei piombi (2 braccio, 2 manovella) |
 | M3x35 | 1 | perno polso W |
-| M3x40 | 1 | perno gomito E |
+| M3x40 | 1 | perno gomito E: **acciaio 8.8 o 12.9** (brunita), non inox: è la vite più sollecitata a flessione |
 
 - Dadi autobloccanti: 4, su E, W, G e V.
 - Dadi normali: 10, su A, B, P1, U, 4 per i coperchi dei piombi e 2 per la staffa.
