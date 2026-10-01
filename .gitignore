@@ -9,3 +9,4 @@ sim/.venv/
 sim/**/__pycache__/
 sim/dynamics/build/
 sim/software/build/
+sim/structural/out/stl/
