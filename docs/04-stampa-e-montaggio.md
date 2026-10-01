@@ -59,7 +59,10 @@ La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio col
 
 - Dadi autobloccanti: 4, su E, W, G e V.
 - Dadi normali: 10, su A, B, P1, U, 4 per i coperchi dei piombi e 2 per la staffa.
-- **Serraggio:** dove ruota qualcosa (E, W, G, V) stringi l'autobloccante finché il giunto non ha gioco assiale **ma gira libero**. Una goccia di olio al silicone o grasso PTFE sui perni e sulla corona della base.
+- **Serraggio:** dove ruota qualcosa (E, W, G, V) stringi l'autobloccante finché il giunto non ha gioco assiale **ma gira libero**.
+  Prova pratica: senza le viti delle squadrette, braccio e avambraccio devono **cadere da soli** sotto il loro peso.
+  Un dado troppo stretto (~10 N di precarico) basta, con un SG90 debole, a far perdere fino a 17° alla spalla in movimento (sim/dynamics).
+  Una goccia di olio al silicone o grasso PTFE sui perni e sulla corona della base: il grasso sulla corona riduce anche il carico del servo base.
 
 ## 3. Montaggio
 
@@ -78,8 +81,10 @@ La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio col
    - **manovella orizzontale verso il retro**: così l'avambraccio sarà orizzontale;
    - **pinza semiaperta** (circa 30 mm).
 5. **Piombi.**
-   - 2 nella coda del braccio.
-   - 4 nelle sedi centrali della manovella. Le 2 esterne sono libere per un'eventuale regolazione fine.
+   - **4 nella coda del braccio** (tutte le sedi).
+   - **2 nelle sedi centrali della manovella**; le 4 laterali restano vuote.
+     Con 4 il gomito risulterebbe bilanciato a vuoto e girerebbe libero nel gioco degli ingranaggi (sim/dynamics).
+     Con 2 resta sempre caricato dallo stesso lato, e i tuoi 6 piombi bastano esattamente.
    - Chiudi i coperchi.
 6. **Catena del gomito.** Monta avambraccio, triangolo e bielle secondo l'ordine delle viti di `cad/linkage.scad`, con distanziali e autobloccanti come in tabella.
    - Il triangolo deve restare **con la leva P1 orizzontale all'indietro e U in verticale**, in qualunque posa.

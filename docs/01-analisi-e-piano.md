@@ -27,7 +27,7 @@ Si usa quindi la **topologia parallela** (famiglia MeArm/EEZYbot):
   - T_gomito = g·Σ mᵢ·dᵢ, con i momenti della catena dell'avambraccio attorno al gomito.
   - T_spalla = g·(m_braccio·d + M_catena·L1): la catena pesa sulla spalla solo come massa al gomito.
 - **Contrappesi:**
-  - Piombi sulla **coda della manovella** (arco di 6 sedi a r = 43 mm) e sulla **coda del braccio** (2 sedi a 30 mm).
+  - Piombi sulla **coda della manovella** (arco di 6 sedi a r = 43 mm, se ne riempiono le 2 centrali) e sulla **coda del braccio** (4 sedi in fila a 30 mm, tutte piene).
   - Coda e segmento ruotano insieme, quindi la compensazione vale a ogni angolo.
   - La manovella gira sull'asse della torretta: il suo contrappeso non carica la spalla.
 
@@ -57,12 +57,15 @@ Masse dai volumi degli STL: PLA al 60% di riempimento effettivo, più servo e fe
 | Configurazione | Payload | Gomito | Spalla |
 |---|---|---|---|
 | senza contrappeso, senza camera | 50 g | SF 1.4 ✗ | — |
-| **4 piombi manovella + 2 braccio, senza camera** | **50 g** | **SF 1.9** | **SF 2.0** |
-| stessa, senza camera | 30 g | SF 2.8 | SF 2.5 |
-| **4 + 2 piombi, con ESP32-CAM** | **30 g** | **SF 2.1** | **SF 2.1** |
-| 6 + 2 piombi, con ESP32-CAM | 50 g | SF 1.8 | SF 1.7 (non consigliato) |
+| **2 piombi manovella + 4 braccio, senza camera** | **50 g** | **SF 2.6** | **SF 2.3** |
+| **2 + 4 piombi, con ESP32-CAM** | **50 g** | **SF 2.2** | **SF 2.0** |
+| 2 + 4 piombi, con ESP32-CAM | 30 g | SF 2.9 | SF 2.5 |
 
-Punti di progetto: **50 g senza camera, 30 g con la camera**.
+Punto di progetto: **50 g, anche con la camera**.
+
+La pinza è livellata: ruotando l'avambraccio trasla senza ruotare, quindi pinza, carico e camera pesano sul gomito con braccio L2 e non L2 + 42 mm. Il resto del momento lo regge il montante fisso G.
+La simulazione MuJoCo (`sim/dynamics`) lo conferma: le coppie a regime coincidono con il lavoro virtuale.
+Il giunto che limita è la spalla. Con SG90 deboli (1.2 kg·cm) conviene restare a 30 g, oppure tenere v ≤ 0.7.
 
 Base, pinza e corrente:
 - **Base:** 0.18 kg·cm di inerzia a 10 rad/s² più 0.45 kg·cm di attrito della corona PLA su PLA, **SF 2.5**. Con il grasso l'attrito cala.

@@ -9,7 +9,7 @@ Lo pilota un ESP32 e si controlla da una web app locale con digital twin 3D.
 |---|---|
 | Assi | base, spalla, gomito + pinza parallela; pinza **sempre orizzontale** (doppio parallelogramma) |
 | Sbraccio | 202 mm dall'asse spalla |
-| Payload | 50 g, oppure 30 g con ESP32-CAM montata (SF ≥ 2 sulla coppia di stallo, vedi `calc/`) |
+| Payload | 50 g anche con la ESP32-CAM montata (SF ≥ 2 sulla coppia di stallo: `calc/` + simulazione MuJoCo in `sim/`) |
 | Pinza | cremagliera simmetrica, corsa 0–59 mm |
 | Motori | 4 × SG90 180°: spalla e gomito sulla torretta, contrappesi con piombi da pesca |
 | Elettronica | ESP32 DevKit V1, PWM diretto dai GPIO, caricatore USB 5V 3A, morsetti WAGO |
