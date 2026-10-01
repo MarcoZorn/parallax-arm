@@ -1,82 +1,117 @@
-// Profilo trapezoidale sincronizzato (§5), stesso comportamento del firmware, per la simulazione.
-// Tutti i giunti seguono lo stesso profilo normalizzato s(t) scalato sulla loro corsa:
-// partono e arrivano insieme, e nessuno supera vmax/amax (moltiplicati per il fattore v).
-// Integrazione a passi fissi (50 Hz) con legge di arresto discreta: un nuovo move riparte
-// dalla posizione e velocità correnti senza scatti (in frenata si usa amax pieno).
+// Planner del firmware (firmware/src/motion.cpp, §5) portato riga per riga: il twin mostra ciò che fa il device.
+// Profilo trapezoidale sincronizzato calcolato online a 50 Hz: da fermo i giunti restano sulla retta e
+// arrivano insieme; un nuovo move riparte da posizione e velocità correnti; stop frena ad AMAX pieno.
+// Limiti e vincolo th2-phi come bordi morbidi (vedi motion.cpp). Le differenze col firmware sono solo
+// di arrotondamento (double qui, float là): verificate da sim/software/equiv.mjs.
+import { cal, PAR } from './robot.js';
 
 export const VMAX = [90, 90, 90, 60]; // °/s, pinza mm/s
 export const AMAX = [180, 180, 180, 120]; // °/s², pinza mm/s²
 export const DT = 1 / 50;
+
+const EPS = 1e-4, TOL = 1e-3, HARD = 0.01, SNAP = 1.2; // come motion.cpp
+const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+// velocità massima da cui ci si ferma entro d frenando di A*dt a ogni tick, senza superare d nel tick
+const vstop = (d, A, dt) => (d <= 0 ? 0 : Math.min(A * dt * (Math.sqrt(0.25 + (2 * d) / (A * dt * dt)) - 0.5), d / dt));
 
 export class Motion {
   constructor(q) {
     this.q = [...q];
     this.v = [0, 0, 0, 0];
     this.target = [...q];
-    this.vl = [0, 0, 0, 0]; // limiti per giunto del profilo corrente
-    this.al = [0, 0, 0, 0];
-    this.f = 1;
+    this.vmax = [0, 0, 0, 0]; // limiti del moto corrente, già scalati per f
+    this.amax = [0, 0, 0, 0];
+    this.stopping = false;
     this.moving = false;
     this.enabled = true;
   }
 
+  // target già validato; f in (0, 1]
   move(target, f = 1) {
-    this.f = Math.min(1, Math.max(0.01, f));
+    f = Math.min(1, Math.max(0.01, f));
     this.target = [...target];
-    const d = target.map((t, i) => Math.abs(t - this.q[i]));
-    // limiti del profilo unitario (corsa 1): il giunto più lento comanda
-    let Vs = Infinity, As = Infinity;
-    d.forEach((di, i) => {
-      if (di > 1e-9) { Vs = Math.min(Vs, VMAX[i] * this.f / di); As = Math.min(As, AMAX[i] * this.f / di); }
-    });
-    this.vl = d.map((di) => (Vs < Infinity ? di * Vs : 0));
-    this.al = d.map((di) => (As < Infinity ? di * As : 0));
+    this.vmax = VMAX.map((x) => x * f);
+    this.amax = AMAX.map((x) => x * f);
+    this.stopping = false;
     this.moving = true;
   }
 
-  // decelera con amax e tiene la posizione
+  // decelera e tiene la posizione (il target diventa la posa di arresto a fine frenata)
   stop() {
-    this.target = this.q.map((q, i) => {
-      const a = AMAX[i] * this.f, v = this.v[i];
-      this.vl[i] = Math.abs(v);
-      this.al[i] = a;
-      return q + (v * Math.abs(v)) / (2 * a);
-    });
+    this.stopping = true;
+    this.moving = true;
   }
 
   // arresto immediato (E-STOP: PWM sganciato)
   halt() {
     this.v = [0, 0, 0, 0];
     this.target = [...this.q];
+    this.stopping = false;
     this.moving = false;
   }
 
-  step(dt = DT) {
-    let busy = false;
-    for (let i = 0; i < 4; i++) {
-      const e = this.target[i] - this.q[i], ae = Math.abs(e), al = this.al[i];
-      let vd = 0;
-      if (al > 0 && ae > 0) {
-        // massima velocità da cui ci si ferma esattamente in ae con gradini di al·dt
-        // (n gradini pieni + resto δ distribuito): discesa lineare, arrivo esatto
-        const ad = al * dt * dt;
-        const n = Math.floor((Math.sqrt(1 + (8 * ae) / ad) - 1) / 2);
-        const vs = n * al * dt + (ae - (ad * n * (n + 1)) / 2) / ((n + 1) * dt);
-        vd = Math.sign(e) * Math.min(this.vl[i], vs);
+  // c: taratura con i limiti (default quella della UI; il finto device in sim/ passa la sua)
+  step(dt = DT, c = cal) {
+    const { q, v, target } = this;
+    const d = target.map((t, j) => t - q[j]), v0 = [...v];
+    if (this.stopping) {
+      // tutte le velocità scalate dello stesso fattore, il giunto più carico frena ad AMAX
+      let T = 0;
+      for (let j = 0; j < 4; j++) T = Math.max(T, Math.abs(v[j]) / AMAX[j]);
+      const s = T > dt ? 1 - dt / T : 0;
+      for (let j = 0; j < 4; j++) v[j] *= s;
+    } else {
+      // limiti per unità di distanza residua, presi dal giunto più lento
+      let vs = Infinity, as = Infinity;
+      for (let j = 0; j < 4; j++) {
+        const ad = Math.abs(d[j]);
+        if (ad > EPS) { vs = Math.min(vs, this.vmax[j] / ad); as = Math.min(as, this.amax[j] / ad); }
       }
-      const v = this.v[i];
-      const brake = Math.abs(vd) < Math.abs(v) || vd * v < 0;
-      const A = (brake ? Math.max(al, AMAX[i] * this.f) : al) * dt;
-      this.v[i] = v + Math.min(A, Math.max(-A, vd - v));
-      this.q[i] += this.v[i] * dt;
-      if (Math.abs(this.target[i] - this.q[i]) < 1e-9 && Math.abs(this.v[i]) <= A) {
-        this.q[i] = this.target[i];
-        if (vd === 0) this.v[i] = 0;
+      for (let j = 0; j < 4; j++) {
+        const ad = Math.abs(d[j]);
+        let vdes = 0, Aj = AMAX[j];
+        if (ad > EPS) {
+          Aj = as * ad;
+          const vb = Aj * dt * (Math.sqrt(0.25 + (2 * ad) / (Aj * dt * dt)) - 0.5);
+          vdes = Math.sign(d[j]) * Math.min(vs * ad, vb);
+        }
+        // accelera con il limite sincronizzato, frena sempre con AMAX pieno
+        const accel = vdes * v[j] >= 0 && Math.abs(vdes) > Math.abs(v[j]);
+        const lim = (accel ? Aj : AMAX[j]) * dt;
+        const vn = v[j] + clamp(vdes - v[j], -lim, lim);
+        // inversione: oltre lo zero è di nuovo accelerazione, col limite sincronizzato
+        v[j] = vn * v[j] < 0 ? Math.sign(vn) * Math.min(Math.abs(vn), Aj * dt) : vn;
       }
-      if (this.v[i] !== 0 || this.q[i] !== this.target[i]) busy = true;
     }
-    this.moving = busy;
-    return busy;
+    // arrivo esatto solo da velocità di fine profilo
+    const snap = d.map((dj, j) => {
+      const ad = Math.abs(dj), dv = SNAP * AMAX[j] * dt;
+      const s = !this.stopping && ((v[j] * dj > 0 && Math.abs(v[j]) * dt >= ad && ad / dt <= dv && Math.abs(v0[j]) - ad / dt <= dv) || (ad <= EPS && v[j] === 0));
+      if (s) v[j] = dj / dt;
+      return s;
+    });
+    // bordi morbidi: e = th2 - phi e limiti di giunto
+    const e0 = q[1] - q[2], ev = v[1] - v[2];
+    const evm = vstop(ev > 0 ? PAR[1] + TOL - e0 : e0 - (PAR[0] - TOL), 2 * AMAX[1], dt);
+    if (Math.abs(ev) > evm) {
+      const c = (Math.sign(ev) * (Math.abs(ev) - evm)) / 2;
+      v[1] -= c; v[2] += c; snap[1] = snap[2] = false;
+    }
+    for (let j = 0; j < 4; j++) {
+      const vm = vstop(v[j] > 0 ? c[j].max + TOL - q[j] : q[j] - (c[j].min - TOL), AMAX[j], dt);
+      if (Math.abs(v[j]) > vm) { v[j] = Math.sign(v[j]) * vm; snap[j] = false; }
+    }
+    const qn = q.map((x, j) => (snap[j] ? target[j] : x + v[j] * dt));
+    snap.forEach((s, j) => { if (s) v[j] = 0; });
+    // ultima difesa: si blocca solo il moto che peggiora
+    for (let j = 0; j < 4; j++)
+      if ((qn[j] < c[j].min - HARD && qn[j] < q[j]) || (qn[j] > c[j].max + HARD && qn[j] > q[j])) { qn[j] = q[j]; v[j] = 0; }
+    const e1 = qn[1] - qn[2];
+    if ((e1 < PAR[0] - HARD && e1 < e0) || (e1 > PAR[1] + HARD && e1 > e0)) { qn[1] = q[1]; qn[2] = q[2]; v[1] = v[2] = 0; }
+    this.q = qn;
+    if (this.stopping && v.every((x) => x === 0)) this.halt();
+    this.moving = this.stopping || this.v.some((x) => x !== 0) || this.q.some((x, j) => x !== this.target[j]);
+    return this.moving;
   }
 }
 
