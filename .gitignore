@@ -7,3 +7,4 @@ web/dist/
 firmware/data/
 sim/.venv/
 sim/**/__pycache__/
+sim/dynamics/build/
