@@ -150,7 +150,10 @@ static void handle(const Cmd& c) {
         if (c.j < 0 || c.j >= NJ || !isfinite(c.v)) return sendErr(c.client, "raw: giunto o us non validi");
         if (pl.moving()) return sendErr(c.client, "raw: braccio in moto");
         // il giunto va dove dice l'impulso: la posa resta coerente, il prossimo move parte da qui senza salti
-        pl.q[c.j] = pl.target[c.j] = us_to_q(cal[c.j], constrain(c.v, US_MIN, US_MAX));
+        float qn = us_to_q(cal[c.j], constrain(c.v, US_MIN, US_MAX));
+        float e = (c.j == 1 ? qn : pl.q[1]) - (c.j == 2 ? qn : pl.q[2]);
+        if (e < PAR_MIN - 0.001f || e > PAR_MAX + 0.001f) return sendErr(c.client, "raw: fuori vincolo th2-phi");
+        pl.q[c.j] = pl.target[c.j] = qn;
         break;
     }
     case C_CAL_GET:
@@ -205,7 +208,8 @@ static void onWs(AsyncWebSocket*, AsyncWebSocketClient* client, AwsEventType typ
         JsonArray q = doc["q"];
         if (q.size() != NJ) return sendErr(id, "move: servono 4 valori in q");
         for (int j = 0; j < NJ; j++) c.q[j] = q[j] | NAN;
-        c.v = doc["v"] | 0.5f;
+        JsonVariant v = doc["v"];
+        c.v = v.isNull() ? 0.5f : (v.is<float>() ? v.as<float>() : NAN);  // tipo sbagliato -> rifiutato, non 0.5
     } else if (!strcmp(t, "stop")) c.t = C_STOP;
     else if (!strcmp(t, "enable")) c.t = C_ENABLE;
     else if (!strcmp(t, "raw")) {
@@ -283,7 +287,11 @@ void setup() {
 
 void loop() {
     static uint32_t tCtl = millis(), tState = millis();
-    if (estopReq) estopReq = false, estop();
+    if (estopReq) {  // i comandi arrivati prima dell'estop non devono essere eseguiti dopo
+        estopReq = false;
+        xQueueReset(cmdq);
+        estop();
+    }
     Cmd c;
     while (xQueueReceive(cmdq, &c, 0) == pdTRUE) handle(c);
     attachStep();
