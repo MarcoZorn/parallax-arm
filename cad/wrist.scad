@@ -41,10 +41,10 @@ plate_t = dt_h + 1.2;
 plate_top = rack_bot;
 plate_bot = plate_top - plate_t;
 y_half = 36;                   // corsa cremagliere entro +-35
-tab = [3.5, 4];                // linguetta dito: altezza z, spessore y
+tab = [3.5, 5];                // linguetta dito: altezza z, spessore y (5: taglio tra layer 5.6 MPa, sim/structural)
 tab_z = rack_bot + 1.3;
 stem_x = rack_out;             // il gambo aderisce alla faccia esterna della cremagliera
-stem_t = 3.5;
+stem_t = 6;
 pad = [24, 16];                // dito: lunghezza x (dal centro verso il lato opposto) e altezza z
 pad_top = plate_bot - 2;
 tcp_z = pad_top - pad[1] / 2;
@@ -98,7 +98,11 @@ module rack() {
             // coda di rondine sotto, centrata nel corpo
             // stretta in alto (attacco al corpo), larga in basso: si incastra nella gola della base_plate
             translate([rp + (rack_out - rp) / 2 + 0.6 - rp, rack_len / 2, 0]) rotate([90, 0, 0]) linear_extrude(rack_len)
+            {
                 translate([0, -dt_h]) offset(delta = -clr_slide) polygon([[-dt_bot / 2, 0], [dt_bot / 2, 0], [dt_top / 2, dt_h], [-dt_top / 2, dt_h]]);
+                // collo: l'offset abbassa anche il lato attaccato, senza questo resterebbe una fessura di clr_slide
+                translate([-(dt_top / 2 - clr_slide), -clr_slide - 0.01]) square([dt_top - 2 * clr_slide, clr_slide + 0.02]);
+            }
         }
     }
 }
@@ -123,7 +127,7 @@ module jaw() { rack(); finger(); }
 // Niente pareti: le code di rondine guidano già le cremagliere in tutte le direzioni tranne lo scorrimento.
 posts = [[xp, -22], [xp, 22]];     // fuori dal disco del pignone (r 17) e dal corpo del servo
 module deck_outline() hull() {
-    translate([x_back, -7.5]) square([12, 12]);
+    translate([x_back, -7.5]) square([15, 12]);
     translate([xp - 8, -23.5]) square([16, 36]);
     for (p = posts) translate(p) circle(r = 5);
     translate([xp + 8, -cam.x / 2 - 3]) square([10, cam.x + 6]);
@@ -133,16 +137,16 @@ module housing() {
         union() {
             translate([0, 0, zd - deck_t]) linear_extrude(deck_t) deck_outline();
             for (p = posts) translate([p.x, p.y, plate_top]) cylinder(d = 7, h = zd - deck_t - plate_top + 0.01);
-            translate([x_back, -7, zd - deck_t - 3]) cube([12, 11, 3]);   // rinforzo per i dadi della staffa
+            translate([x_back, -7, zd - deck_t - 3]) cube([15, 11, 3]);   // rinforzo per i dadi della staffa
         }
         // finestra SG90 capovolto: asse albero in (xp, 0), corpo lungo Y
-        translate([xp - sg_body.y / 2 - clr_pocket, -(sg_body.x - sg_shaft_x) - clr_pocket, zd - deck_t - 1])
-            cube([sg_body.y + 2 * clr_pocket, sg_body.x + 2 * clr_pocket, deck_t + 2]);
+        translate([xp - sg_body.y / 2 - clr_servo, -(sg_body.x - sg_shaft_x) - clr_servo, zd - deck_t - 1])
+            cube([sg_body.y + 2 * clr_servo, sg_body.x + 2 * clr_servo, deck_t + 2]);
         for (y = [-(sg_body.x - sg_shaft_x) / 2 + sg_shaft_x / 2 - sg_screw_pitch / 2, -(sg_body.x - sg_shaft_x) / 2 + sg_shaft_x / 2 + sg_screw_pitch / 2])
             translate([xp, y, zd - deck_t - 1]) cylinder(d = sg_screw_d - 0.4, h = deck_t + 2, $fn = 16);
         for (p = posts) translate([p.x, p.y, plate_top - 1]) cylinder(d = 2.5, h = 12);   // autofilettanti M3 dal basso
-        // viti staffa: 2 x M3 verticali con dado sotto
-        for (x = [x_back + 3.5, x_back + 8.5])
+        // viti staffa: 2 x M3 verticali con dado sotto, interasse 7.5 (a 5 le sedi dei dadi si fondevano)
+        for (x = [x_back + 3.5, x_back + 11])
             translate([x, -1.5, zd - deck_t - 3 - 1]) { cylinder(d = m3_d + clr_hole, h = 10); rotate(30) hex_pocket(h = 3.6); }
         // viti della culla camera
         for (y = [-cam.x / 2, cam.x / 2]) translate([xp + 13, y, zd - deck_t - 1]) cylinder(d = 2.5, h = deck_t + 2);
@@ -173,14 +177,14 @@ module bracket() {
                 hull() { circle(r = 7); translate([x_back - 7, zd - 4]) square([7, 5]); }   // sovrapposto alla flangia: niente spigoli condivisi
             }
             // flangia sul piano superiore
-            translate([x_back - 1, y_bracket[0], zd]) cube([12, y_bracket[1] - y_bracket[0], 4]);
+            translate([x_back - 1, y_bracket[0], zd]) cube([15.5, y_bracket[1] - y_bracket[0], 4]);
             // leva V
             translate([0, y_link[1], 0]) rotate([90, 0, 0]) linear_extrude(y_link[1] - y_link[0])
                 hull() { circle(r = 7); translate([0, lev2_r]) circle(r = 5); }
         }
         translate([0, 10, 0]) rotate([90, 0, 0]) cylinder(d = m3_d + clr_pivot, h = 30);        // W: ruota sulla vite
         translate([0, 10, lev2_r]) rotate([90, 0, 0]) cylinder(d = m3_d + clr_hole, h = 30);   // V
-        for (x = [x_back + 3.5, x_back + 8.5]) translate([x, -1.5, zd - 1]) cylinder(d = m3_d + clr_hole, h = 10);
+        for (x = [x_back + 3.5, x_back + 11]) translate([x, -1.5, zd - 1]) cylinder(d = m3_d + clr_hole, h = 10);
     }
 }
 
