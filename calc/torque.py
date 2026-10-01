@@ -7,6 +7,9 @@ Per lavoro virtuale (caso peggiore: segmenti orizzontali):
   T_spalla = g * (m_braccio*d + M_cat*L1)    la catena pesa sulla spalla solo come massa al gomito
 I contrappesi (piombi da pesca 20 g) sulla coda della manovella gomito e del braccio compensano la gravità
 a ogni angolo: coda e segmento ruotano insieme, quindi entrambi i momenti vanno con lo stesso cos(angolo).
+La pinza è livellata dai parallelogrammi: ruotando phi trasla senza ruotare, quindi pinza, payload e camera
+caricano il gomito col braccio L2 (non L2+L3). Il resto del loro momento va al montante fisso G
+(verificato con la simulazione MuJoCo in sim/dynamics: coppie a regime uguali al lavoro virtuale).
 
 Masse dai volumi degli STL in cad/stl (PLA 1.24 g/cm3 x 0.6 di riempimento effettivo) + componenti.
 Rilancia dopo ogni modifica: python3 calc/torque.py   (quote = cad/params.scad e cad/wrist.scad)
@@ -18,8 +21,8 @@ L1 = 0.080  # spalla -> gomito
 L2 = 0.080  # gomito -> perno polso
 L3 = 0.042  # perno polso -> centro dita (xp in wrist.scad)
 LEAD = 0.020  # piombo da pesca a oliva
-R_CW_SHOULDER = 0.030  # 2 piombi affiancati sulla coda del braccio
-R_CW_ELBOW = {4: 0.0393, 6: 0.0346}  # baricentro dell'arco di piombi (echo di cad/crank.scad)
+R_CW_SHOULDER = 0.030  # 4 piombi in fila trasversale sulla coda del braccio
+R_CW_ELBOW = {2: 0.0422, 4: 0.0393, 6: 0.0346}  # baricentro dell'arco di piombi, sedi centrali per prime (cad/crank.scad)
 
 SG90_T = 1.6  # kg*cm @4.8V dichiarati (i cloni reali 1.2-1.5: da qui SF 2)
 SG90_I = 0.75  # A stallo
@@ -28,16 +31,16 @@ PAYLOAD_MAX = 0.050
 
 
 def chain(payload, cam):
-    """Catena avambraccio: (nome, massa kg, distanza dal gomito m)."""
+    """Catena avambraccio: (nome, massa kg, braccio di leva rispetto al gomito m). Le parti livellate stanno a L2."""
     c = [
         ("avambraccio (13_forearm)", 0.0090, L2 / 2),
         ("biella livellamento 2 + triangolo", 0.0032, L2 / 2),
         ("viti/dadi/distanziale polso", 0.0045, L2),
-        ("pinza stampata + SG90 (15..19)", 0.0373, L2 + 0.038),
-        ("payload", payload, L2 + L3),
+        ("pinza stampata + SG90 (15..19)", 0.0373, L2),
+        ("payload", payload, L2),
     ]
     if cam:
-        c.append(("ESP32-CAM + culla (20)", 0.0131, L2 + 0.055))
+        c.append(("ESP32-CAM + culla (20)", 0.0131, L2))
     return c
 
 
@@ -55,7 +58,7 @@ def t_shoulder(payload, cam, n_lead):
     return (0.0132 * L1 / 2 + m_chain * L1 - n_lead * LEAD * R_CW_SHOULDER) * G / KGCM
 
 
-def report(cam, n_elbow, n_shoulder=2):
+def report(cam, n_elbow, n_shoulder=4):
     print(f"\n=== {'con' if cam else 'senza'} ESP32-CAM, {n_elbow} piombi gomito + {n_shoulder} spalla ===")
     sfs = {}
     for p in (0.0, 0.030, PAYLOAD_MAX):
@@ -71,9 +74,9 @@ if __name__ == "__main__":
           f"{(L1 + L2 + L3) * 1000:.0f} mm dall'asse spalla. SG90 {SG90_T} kg*cm, SF min {SF_MIN}")
     print(f"senza contrappeso, senza camera, 50 g: gomito SF {SG90_T / t_elbow(PAYLOAD_MAX, False, 0):.2f}")
 
-    a = report(cam=False, n_elbow=4)
-    b = report(cam=True, n_elbow=4)
-    c = report(cam=True, n_elbow=6)
+    a = report(cam=False, n_elbow=2)
+    b = report(cam=True, n_elbow=2)
+    c = report(cam=True, n_elbow=4)
 
     # Base: asse verticale, nessuna coppia gravitazionale; inerzia a braccio disteso, accel. limitata dal firmware
     inertia = moment(chain(PAYLOAD_MAX, True)) * (L2 + L3) + 0.03 * L1**2
@@ -92,9 +95,10 @@ if __name__ == "__main__":
     n = 4
     print(f"corrente: stallo cumulativo {n} x {SG90_I} A = {n * SG90_I:.2f} A -> caricatore USB 5V >= 3A")
 
-    # Punti di progetto (docs/01): 50 g senza camera, 30 g con camera, sempre con 4+2 piombi.
-    # c) è solo informativa: con camera e 50 g limita la spalla (SF ~1.7) anche con 6 piombi al gomito.
-    assert a[PAYLOAD_MAX] >= 1.9, a
-    assert b[0.030] >= 2.0, b
+    # Punto di progetto (docs/01): 2 piombi sulla manovella + 4 sulla coda del braccio, 50 g anche con la camera.
+    # 2 e non 4 sulla manovella: con 4 il gomito è bilanciato a vuoto e gira libero nel gioco (sim/dynamics).
+    assert a[PAYLOAD_MAX] >= 2.0, a
+    assert b[PAYLOAD_MAX] >= 2.0, b
+    assert t_elbow(0.0, False, 2) > 0.1  # il gomito resta caricato sempre dallo stesso lato
     assert SG90_T / (tb + friction) >= SF_MIN
     assert turn <= 170 and f_jaw >= f_need
