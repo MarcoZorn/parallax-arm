@@ -56,6 +56,7 @@ function flush() {
 
 // valida e comanda un target di giunto; false se rifiutato (il braccio non si muove)
 function command(q, v = S.v, quiet = false) {
+  q = q.map((x) => Math.round(x * 100) / 100); // come li manda link.move: si valida ciò che riceve il device
   const err = R.validate(q);
   if (err) { if (!quiet) note(err, 'err'); return false; }
   if (!S.enabled) { if (!quiet) note('Braccio disabilitato: premi Abilita', 'err'); return false; }
@@ -86,7 +87,9 @@ function estop() {
 function stop() {
   cancelPending();
   seqAbort();
-  if (live()) { link.stop(); S.adopt = true; } else { sim.stop(); S.target = [...sim.target]; syncTargetUI(); }
+  // come il device: il target diventa la posa di arresto a fine frenata (adottata da frame() o da state)
+  if (live()) link.stop(); else sim.stop();
+  S.adopt = true;
 }
 function enable() {
   if (live()) { link.enable(); S.adopt = true; } else { sim.enabled = true; note('Abilitato (simulazione)', 'ok'); }
@@ -350,9 +353,11 @@ tc.addEventListener('objectChange', () => {
   if (!dragging) return;
   const p = tgt.position;
   const s = R.solve({ x: p.x, y: p.y, z: p.z }, S.target[3]);
-  dragBad = !s.ok || !S.enabled;
+  // vicino all'asse di yaw 1 mm di gizmo può girare la base di ~180° (sim/software/ikfk.mjs): si rifiuta il salto
+  const jump = s.ok && Math.abs(s.q[0] - S.target[0]) > 30;
+  dragBad = !s.ok || !S.enabled || jump;
   tgt.material.color.set(dragBad ? 0xe5484d : 0xff7a1a);
-  setIkMsg(s.ok ? (S.enabled ? 'raggiungibile' : 'braccio disabilitato') : s.msg, !dragBad);
+  setIkMsg(jump ? 'troppo vicino all\'asse della base: la base girerebbe di colpo' : s.ok ? (S.enabled ? 'raggiungibile' : 'braccio disabilitato') : s.msg, !dragBad);
   if (!dragBad) command(s.q, S.v, true);
 });
 function placeTarget() {
@@ -647,7 +652,7 @@ $('fImport').onchange = async (e) => {
 
 // ---------- UI: taratura ----------
 let calEdit = R.defaultCal();
-const CAL_F = ['ref_us', 'k', 'q_ref', 'min', 'max'];
+const CAL_F = R.CAL_F;
 function renderCal() {
   $('calRows').innerHTML = '';
   calEdit.forEach((c, j) => {
@@ -684,14 +689,11 @@ $('bK').onclick = () => {
   c.k = +((+$('rawUs').value - c.ref_us) / (q2 - c.q_ref)).toFixed(3);
   renderCal();
 };
-function calValid(c) {
-  return c.length === 4 && c.every((x) => CAL_F.every((f) => Number.isFinite(x[f])) && x.k !== 0 && x.min < x.max);
-}
 function applyCal(cal, home) {
-  if (!calValid(cal)) return note('Taratura non valida', 'err');
+  if (!R.calValid(cal)) return note('Taratura non valida', 'err');
   R.setCal(cal);
   if (home) R.HOME.splice(0, 4, ...home);
-  calEdit = cal.map((x) => ({ ...x }));
+  calEdit = cal.map((x) => Object.fromEntries(CAL_F.map((f) => [f, x[f]])));
   renderCal();
   applyLimits();
   buildEnvelope();
@@ -699,7 +701,7 @@ function applyCal(cal, home) {
 }
 $('bCalGet').onclick = () => (live() ? link.calGet() : applyCal(R.cal));
 $('bCalSet').onclick = () => {
-  if (!calValid(calEdit)) return note('Taratura non valida (k ≠ 0, min < max)', 'err');
+  if (!R.calValid(calEdit)) return note('Taratura non valida (ref_us 500…2500, |k| ≥ 1, min < max)', 'err');
   live() ? link.calSet(calEdit) : applyCal(calEdit);
 };
 $('bCalSave').onclick = () => (live() ? (link.calSave(), note('cal_save inviato', 'ok')) : note('Simulazione: nessun device su cui salvare', 'err'));
@@ -824,6 +826,7 @@ function frame(t) {
     S.moving = sim.moving;
     S.enabled = sim.enabled;
     S.us = S.q.map((x, j) => R.toUs(j, x));
+    if (S.adopt && !sim.moving) { S.target = [...sim.target]; S.adopt = false; syncTargetUI(); }
   }
   poseRobot(S.q);
   const p = R.fk(S.q);

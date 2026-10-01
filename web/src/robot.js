@@ -3,7 +3,7 @@
 
 // Quote meccaniche di default (copia di cad/params.scad). I params di rig.json hanno la precedenza:
 // setParams() li applica e FK/IK/frame usano sempre i valori caricati.
-export const P = { base_h: 40, sh_h: 62, L1: 80, L2: 80, L3: 45, tcp_dz: -10, crank_r: 20, lev_r: 20, lev2_r: 30 };
+export const P = { base_h: 40, sh_h: 62, L1: 80, L2: 80, L3: 42, tcp_dz: -24, crank_r: 20, lev_r: 20, lev2_r: 30 };
 export const setParams = (p) => {
   for (const k in P) if (Number.isFinite(p?.[k])) P[k] = p[k];
 };
@@ -26,7 +26,13 @@ export const defaultCal = () => [
   { ref_us: 1500, k: 19.89, q_ref: 29.5, min: 0, max: 59 },
 ];
 export const cal = defaultCal();
-export const setCal = (c) => c.forEach((x, i) => Object.assign(cal[i], x));
+export const CAL_F = ['ref_us', 'k', 'q_ref', 'min', 'max'];
+// stessa regola di check_cal del firmware: 4 giunti, campi finiti, ref_us in [500, 2500], |k| >= 1, min < max
+export const calValid = (c) =>
+  Array.isArray(c) && c.length === 4 &&
+  c.every((x) => x && CAL_F.every((f) => Number.isFinite(x[f])) && x.ref_us >= 500 && x.ref_us <= 2500 && Math.abs(x.k) >= 1 && x.min < x.max);
+// copia solo i campi noti (il messaggio cal arriva dal device: niente chiavi estranee)
+export const setCal = (c) => c.forEach((x, i) => CAL_F.forEach((f) => (cal[i][f] = x[f])));
 export const HOME = [0, 90, 0, 30];
 
 const D = Math.PI / 180;
@@ -127,7 +133,7 @@ export function envelope(step = 1) {
   const pts = [];
   poly.forEach((A, i) => {
     const B = poly[(i + 1) % poly.length];
-    const n = Math.max(1, Math.ceil(Math.hypot(B[0] - A[0], B[1] - A[1]) / step));
+    const n = Math.min(2000, Math.max(1, Math.ceil(Math.hypot(B[0] - A[0], B[1] - A[1]) / step))); // tetto: limiti assurdi dal device non bloccano la UI
     for (let k = 0; k < n; k++) {
       const t = k / n, f = fk([0, A[0] + t * (B[0] - A[0]), A[1] + t * (B[1] - A[1])]);
       pts.push([f.x, f.z]);
