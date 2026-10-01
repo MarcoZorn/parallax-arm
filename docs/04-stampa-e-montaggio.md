@@ -49,7 +49,7 @@ La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio col
 
 | Vite | Qtà | Dove |
 |---|---|---|
-| M3x6 | 1 | perno U (biella 2 → triangolo, dado incassato) |
+| M3x6 | 1 | perno U (biella 2 → triangolo, dado incassato): più lunga entrerebbe nel piano della biella 1 |
 | M3x8 | 8 | B (biella motrice → piastra R), P1 (biella 1 → triangolo), 2 culla camera, 4 coperchio base |
 | M3x12 | 6 | G (montante), V (staffa polso), 2 piastra pinza, 2 staffa → piano pinza |
 | M3x14 | 1 | A (manovella → distanziale → biella motrice, dado incassato) |
@@ -59,6 +59,8 @@ La scritta PARALLAX sul fronte della base è incisa di 0.8 mm: con un cambio col
 
 - Dadi autobloccanti: 4, su E, W, G e V.
 - Dadi normali: 10, su A, B, P1, U, 4 per i coperchi dei piombi e 2 per la staffa.
+- **Frenafiletti medio** (una goccia) su A, B, P1, U: lì il dado è fisso nella sede e il pezzo ruota sulla vite, che altrimenti si svita.
+- **Grasso** (PTFE o al litio) anche sulle code di rondine della pinza: la presa sale da 1.9 a 3.1 N per dito.
 - **Serraggio:** dove ruota qualcosa (E, W, G, V) stringi l'autobloccante finché il giunto non ha gioco assiale **ma gira libero**.
   Prova pratica: senza le viti delle squadrette, braccio e avambraccio devono **cadere da soli** sotto il loro peso.
   Un dado troppo stretto (~10 N di precarico) basta, con un SG90 debole, a far perdere fino a 17° alla spalla in movimento (sim/dynamics).

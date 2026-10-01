@@ -38,7 +38,7 @@ Si usa quindi la **topologia parallela** (famiglia MeArm/EEZYbot):
 | J1 base (yaw) | SG90 in torre, sotto la torretta | −90 … 90° | braccio in avanti |
 | J2 spalla (th2, assoluto) | SG90 guancia −Y | 20 … 160° | braccio verticale |
 | J3 gomito (phi, assoluto) | SG90 guancia +Y, via manovella | −70 … 70° | avambraccio orizzontale |
-| vincolo | — | 20 ≤ th2 − phi ≤ 150 | parallelogramma non degenere, ferramenta libera |
+| vincolo | — | 35 ≤ th2 − phi ≤ 150 | parallelogramma non degenere, ferramenta libera |
 | J4 pinza | SG90 capovolto sulla pinza | 0 … 59 mm | 29.5 mm |
 
 Dimensioni:

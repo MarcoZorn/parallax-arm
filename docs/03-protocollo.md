@@ -12,7 +12,7 @@ Se cambiano là, vanno aggiornati qui, in `firmware/src/config.h` e in `web/src/
 | 2 | gomito | phi | ° assoluti dall'orizzontale (angolo avambraccio) | −70 … 70 | 0 (avambraccio orizzontale) |
 | 3 | pinza | g | mm di apertura | 0 … 59 | 29.5 |
 
-**Vincolo del parallelogramma** (in aggiunta ai limiti): `20 ≤ th2 − phi ≤ 150`. Limiti e vincolo vengono dai piani delle parti e dalla ferramenta, verificati con `cad/assembly.scad`.
+**Vincolo del parallelogramma** (in aggiunta ai limiti): `35 ≤ th2 − phi ≤ 150`. Limiti e vincolo vengono dai piani delle parti e dalla ferramenta, verificati con `cad/assembly.scad`.
 Un target fuori vincolo **viene rifiutato** (messaggio `err`), mai "aggiustato" in silenzio.
 
 Il servo del gomito sta sulla torretta e muove la manovella. L'angolo della manovella è psi = phi + 180,
