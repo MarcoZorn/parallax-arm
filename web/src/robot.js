@@ -27,10 +27,14 @@ export const defaultCal = () => [
 ];
 export const cal = defaultCal();
 export const CAL_F = ['ref_us', 'k', 'q_ref', 'min', 'max'];
-// stessa regola di check_cal del firmware: 4 giunti, campi finiti, ref_us in [500, 2500], |k| >= 1, min < max
+// limiti meccanici (assembly.scad): la taratura non può allargarli, come Q_MIN/Q_MAX nel firmware
+export const QLIM = defaultCal().map(({ min, max }) => [min, max]);
+// stessa regola di check_cal del firmware: 4 giunti, campi finiti, ref_us in [500, 2500], |k| >= 1, min < max,
+// limiti dentro quelli meccanici
 export const calValid = (c) =>
   Array.isArray(c) && c.length === 4 &&
-  c.every((x) => x && CAL_F.every((f) => Number.isFinite(x[f])) && x.ref_us >= 500 && x.ref_us <= 2500 && Math.abs(x.k) >= 1 && x.min < x.max);
+  c.every((x, j) => x && CAL_F.every((f) => Number.isFinite(x[f])) && x.ref_us >= 500 && x.ref_us <= 2500 &&
+    Math.abs(x.k) >= 1 && x.min < x.max && x.min >= QLIM[j][0] - 0.001 && x.max <= QLIM[j][1] + 0.001);
 // copia solo i campi noti (il messaggio cal arriva dal device: niente chiavi estranee)
 export const setCal = (c) => c.forEach((x, i) => CAL_F.forEach((f) => (cal[i][f] = x[f])));
 export const HOME = [0, 90, 0, 30];
