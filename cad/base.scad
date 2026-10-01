@@ -63,7 +63,7 @@ module tray() {
             }
         }
         // cavità della torre e asola per il cavo del servo
-        translate([body_x[0] - clr_pocket, -sg_body.y / 2 - clr_pocket, floor_h]) cube([sg_body.x + 2 * clr_pocket, sg_body.y + 2 * clr_pocket, tower_top]);
+        translate([body_x[0] - clr_servo, -sg_body.y / 2 - clr_servo, floor_h]) cube([sg_body.x + 2 * clr_servo, sg_body.y + 2 * clr_servo, tower_top]);
         translate([body_x[0] - 6, -3, floor_h]) cube([8, 6, 8]);
         for (x = [(body_x[0] + body_x[1]) / 2 - sg_screw_pitch / 2, (body_x[0] + body_x[1]) / 2 + sg_screw_pitch / 2])
             translate([x, 0, tower_top - 8]) cylinder(d = sg_screw_d - 0.4, h = 9, $fn = 16);

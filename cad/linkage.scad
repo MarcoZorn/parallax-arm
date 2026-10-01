@@ -7,10 +7,12 @@
 // Ferramenta (M3):
 //  E  gomito: M3x40 dalla faccia esterna del braccio, distanziali d6 (8 mm) e d5 (8 mm), autobloccante lato +y
 //  W  polso:  M3x35 dalla piastra L, distanziale d6 (8 mm), autobloccante lato +y
-//  A  manovella: M3x20 dal lato servo della manovella -> distanziale -> biella, dado incassato nella biella
-//  B  leva:   M3x10 dalla biella motrice, dado incassato nella piastra R
-//  P1, U triangolo: M3x10 da biella 1 / biella 2, dado incassato nel triangolo
-//  V  staffa: M3x10 dalla biella 2, autobloccante sul lato +y della leva della staffa
+//  A  manovella: M3x14 dal lato servo della manovella -> distanziale -> biella, dado incassato nella biella
+//  B  leva:   M3x8 dalla biella motrice, dado incassato nella piastra R (più lunga sporgerebbe sulla testa di P1)
+//  P1 triangolo: M3x8 dalla biella 1, dado incassato nel triangolo
+//  U  triangolo: M3x6 dalla biella 2, dado incassato (più lunga entrerebbe nel piano della biella 1) + frenafiletti
+//  V  staffa: M3x12 dalla biella 2, autobloccante sul lato +y della leva della staffa
+//  Su A, B, P1, U il dado è fisso nella sede e il pezzo ruota sulla vite: una goccia di frenafiletti medio.
 include <params.scad>
 use <lib/parts.scad>
 

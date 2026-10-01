@@ -13,18 +13,20 @@ use <lib/parts.scad>
 part = "arm";  // arm | lid | all
 
 t = 6;                     // spessore del braccio
-hub_r = 9;                 // mozzo spalla: contiene la squadretta con >= 1.6 mm di parete
-elbow_r = 7;
+hub_r = 11;                // mozzo spalla: contiene la squadretta con margine
+elbow_r = 9;               // braccio largo 22 -> 18: più rigido fuori piano e a torsione (sim/structural)
 lead_y = (lead_pocket[1] + 2) / 2;               // sedi affiancate, setto di 2 mm
 // 4 sedi in fila trasversale: baricentro sempre a cw_shoulder_r, la coda non si allunga verso il pavimento
 leads = [for (k = [-3, -1, 1, 3]) [-cw_shoulder_r, k * lead_y]];
 screws = [[-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, lead_y], [-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, -lead_y]];
+rib = [2.5, 6, 12, L1 - 20];  // nervature sulla faccia interna: larghezza, altezza, da x, a x (lontane dal gomito:
+                             // l'avambraccio ripiegato passa sopra gli ultimi ~17 mm). Rigidezza fuori piano x5 (sim/structural)
 chan_w = 5;                // canalina cavi (pinza SG90 + ESP32-CAM)
 chan_d = 3;
 
 module tail_outline(o) hull() {
     for (p = leads) translate(p) lead_outline(o);
-    for (p = screws) translate(p) circle(r = 4);
+    for (p = screws) translate(p) circle(r = 5);
 }
 
 module upper_arm() {
@@ -42,6 +44,11 @@ module upper_arm() {
             }
             linear_extrude(cw_t) tail_outline(lead_wall);
             translate([L1, 0, t]) cylinder(d = 7, h = 0.5);  // rondella di scorrimento verso l'avambraccio
+            // nervature lungo i bordi, sulla faccia interna (in stampa è quella in alto)
+            for (s = [-1, 1]) hull() for (x = [rib[2], rib[3]]) {
+                hw = hub_r + (elbow_r - hub_r) * x / L1;   // semilarghezza del braccio in x
+                translate([x, s * (hw - rib[0] / 2), t - 0.01]) cylinder(d = rib[0], h = rib[1], $fn = 16);
+            }
         }
 
         // spalla: squadretta lungo X, vite centrale con lamatura per la testa lato z=t

@@ -28,7 +28,7 @@ module block_outline(o) {
     for (i = [0:len(angles) - 2]) hull() { lead_at(angles[i], o); lead_at(angles[i + 1], o); }
     for (i = [0, 1]) hull() {  // orecchie delle viti, attaccate alla sede alla stessa quota angolare
         lead_at(angles[1 + i * 3], o);
-        translate(screws[i]) circle(r = 4);
+        translate(screws[i]) circle(r = 5);
     }
 }
 

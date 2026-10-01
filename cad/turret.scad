@@ -27,8 +27,8 @@ module cheek(side) {
     difference() {
         translate([0, y0 + cheek_t, 0]) rotate([90, 0, 0]) linear_extrude(cheek_t) cheek_outline();
         // finestra corpo servo + fori pilota per le viti delle linguette
-        translate([-(sg_body.y / 2 + clr_pocket), y0 - 1, sg_z[0] - clr_pocket])
-            cube([sg_body.y + 2 * clr_pocket, cheek_t + 2, sg_z[1] - sg_z[0] + 2 * clr_pocket]);
+        translate([-(sg_body.y / 2 + clr_servo), y0 - 1, sg_z[0] - clr_servo])
+            cube([sg_body.y + 2 * clr_servo, cheek_t + 2, sg_z[1] - sg_z[0] + 2 * clr_servo + 0.3]);  // +0.3 in alto
         for (s = [-1, 1]) translate([0, y0 - 1, (sg_z[0] + sg_z[1]) / 2 + s * sg_screw_pitch / 2])
             rotate([-90, 0, 0]) cylinder(d = sg_screw_d - 0.4, h = cheek_t + 2, $fn = 16);
         // passaggio cavi pinza/camera: foro + asola aperta sul bordo, il cavo entra di lato (il connettore non passa)
@@ -40,7 +40,7 @@ module cheek(side) {
     // fazzoletti esterni (lato servo): dentro la torretta non c'è spazio, lì ruota tutto
     for (x = [-24, 24]) translate([x - 1.5, side > 0 ? y0 + cheek_t : y0, floor_t])
         rotate([90, 0, 90]) linear_extrude(3)
-            polygon(side > 0 ? [[0, 0], [10, 0], [0, 25]] : [[0, 0], [-10, 0], [0, 25]]);
+            polygon(side > 0 ? [[0, 0], [14, 0], [0, 50]] : [[0, 0], [-14, 0], [0, 50]]);   // alti 50: guance più rigide fuori piano
 }
 
 module post() {

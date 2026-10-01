@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 out=$(mktemp -d)
 names=(turret arm crank drive_rod lev_rod forearm link rod2 wrist hw)
 k=0; bad=0; n=0
-for th in 17 20 40 60 90 120 140 160; do for e in 20 50 80 110 150; do
+for th in 17 20 40 60 90 120 140 160; do for e in 35 60 90 120 150; do
   ph=$((th - e)); [ $ph -lt -70 -o $ph -gt 70 ] && continue
   gg=$(( k % 2 == 0 ? 0 : 59 )); k=$((k+1)); n=$((n+1))
   r=$(openscad -D check=1 -D th2=$th -D phi=$ph -D g=$gg -o "$out/p.stl" assembly.scad 2>&1 | grep -Eio "empty|Volumes: *[0-9]+")

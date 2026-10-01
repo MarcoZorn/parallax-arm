@@ -1,6 +1,6 @@
 // Assieme completo nel frame torretta (yaw = 0) per anteprima e verifica collisioni.
 // Pose: th2 = angolo assoluto braccio, phi = angolo assoluto avambraccio (0 = orizzontale avanti), g = apertura pinza.
-// Limiti: 20 <= th2 <= 160, -70 <= phi <= 70, 20 <= th2 - phi <= 150 (docs/03-protocollo.md).
+// Limiti: 20 <= th2 <= 160, -70 <= phi <= 70, 35 <= th2 - phi <= 150 (docs/03-protocollo.md).
 // Verifica: openscad -D check=1 -D th2=.. -D phi=.. -D g=.. -o out.stl assembly.scad -> deve risultare VUOTO.
 // Controlla ogni coppia di parti più la ferramenta (teste viti, dadi autobloccanti, distanziali).
 include <params.scad>

@@ -8,7 +8,8 @@ clr_hole  = 0.2;   // gioco diametrale fori passanti (M3 -> 3.2)
 clr_pivot = 0.3;   // gioco diametrale fori su cui qualcosa RUOTA
 clr_pocket = 0.2;  // gioco per lato in sedi (servo, squadretta, dado, piombi)
 clr_slide = 0.3;   // riduzione per lato del pezzo maschio nelle guide a scorrimento
-snap_hook = 0.4;   // sporgenza dente a scatto (interferenza)
+clr_servo = 0.3;   // gioco per lato nelle finestre degli SG90: i cloni variano 22.5-23.2 x 12.0-12.6 (sim/structural)
+snap_hook = 0.8;   // sporgenza dente a scatto: con 0.4 la scheda usciva nel 47% dei cloni (sim/structural)
 
 // ---- geometria braccio ----
 L1 = 80;   // spalla -> gomito
@@ -27,7 +28,7 @@ sg_boss_d = 11.8;
 sg_boss_h = 4.0;
 
 // ---- squadretta doppia SG90: valori tipici con un filo di margine (una tasca un po' larga non conta: la tiene la vite) ----
-horn_len  = 32.5;  // punta-punta
+horn_len  = 33.5;  // punta-punta (33.5: entra anche con squadrette lunghe, sim/structural)
 horn_hub_d = 7.2;
 horn_tip_d = 4.0;
 horn_t    = 1.5;   // spessore del piatto
@@ -88,7 +89,7 @@ y_fore_r = [4.5, 8.5];      // piastra R con la leva B (dado B incassato sul lat
 y_bracket = [-7.0, 4.0];    // staffa polso tra le piastre; la sua leva V sta in y_link
 // limiti di giunto derivati dai piani (verificati in assembly.scad)
 lim_phi = [-70, 70];
-lim_e = [20, 150];          // th2 - phi
+lim_e = [35, 150];          // th2 - phi; 35 e non 20: sotto, il parallelogramma amplifica la cedevolezza (sim/structural)
 
 // ---- quote globali per firmware/web (docs/03-protocollo.md) ----
 base_h = 40;      // tavolo -> faccia inferiore torretta (= faccia squadretta del servo base)
