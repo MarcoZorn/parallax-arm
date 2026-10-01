@@ -11,6 +11,7 @@ use <linkage.scad>
 use <wrist.scad>
 use <base.scad>
 use <twin.scad>
+use <cables.scad>
 
 th2 = 60;
 phi = 0;
@@ -18,6 +19,7 @@ g = 30;
 check = 0;
 pi = 0;
 pj = 1;
+show_cables = false;
 psi = phi + 180;  // la manovella punta opposta all'avambraccio
 
 function u(a) = [cos(a), 0, sin(a)];
@@ -79,6 +81,7 @@ if (check == 0) {
     color("DimGray") translate([0, 0, -base_h]) { tray(); lid(); }   // base (solo anteprima)
     cheek_servo(-1); cheek_servo(1);
     translate(W) wrist_servo();
+    if (show_cables) cables(th2, phi);
 } else if (check == 2) {
     intersection() { part(pi); part(pj); }   // una coppia, per isolare una collisione
 } else {

@@ -57,9 +57,6 @@ module upper_arm() {
             translate([0, 0, -0.01]) rotate(30) hex_pocket(h = 2.6);
         }
 
-        // passaggio cavo verso il lato servo (poi esce dal foro della guancia): fuori dalla squadretta (r 16)
-        translate([20, 0, -1]) cylinder(d = 4.5, h = t + 2);
-
         // canalina cavi sulla faccia z=0 (lato servo): al gomito il cavo fa l'ansa all'esterno, lontano dall'avambraccio.
         // 3 ponticelli sul piatto trattengono i fili (fessura di 2.2 mm: il piattino si infila di taglio)
         difference() {

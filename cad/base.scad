@@ -28,7 +28,7 @@ body_x = [-(sg_body.x - sg_shaft_x), sg_shaft_x];   // corpo lungo X, verso il r
 // ESP32 DevKit V1 38 pin: PCB 55.3 x 28.3, pin verso il basso, USB verso -X
 esp = [55.3, 28.3, 1.6];
 esp_at = [-size.x / 2 + wall + 3, -size.y / 2 + wall + 11.6]; // angolo -x,-y del PCB (fuori dalla colonnina)
-esp_z = 25;                  // faccia inferiore del PCB (sotto: pin + Dupont femmina)
+esp_z = 30;                  // faccia inferiore del PCB: sotto restano ~6 mm per piegare i fili dei Dupont femmina
 bb = [82.5, 54.5];           // breadboard mezza misura
 bb_at = [-12, 10];
 
@@ -73,6 +73,8 @@ module tray() {
         translate([-size.x / 2 - 1, esp_at.y + esp.y / 2 - 6, esp_z - 4]) cube([wall + 2, 12, 10]);
         translate([-size.x / 2 - 1, 30, 14]) rotate([0, 90, 0]) cylinder(d = 9, h = wall + 2);
         for (dy = [-6, 6]) translate([-size.x / 2 + wall + 4, 30 + dy - 1, -1]) cube([4, 2, floor_h + 2]);  // fascetta antistrappo
+        // ancoraggio del fascio cavi che scende dalla torretta (la rotazione della base si fa nell'ansa sopra)
+        for (y = [7, 19]) translate([-37, y, -1]) cube([4, 2, floor_h + 2]);
         // zona WAGO: 3 coppie di asole per fascette
         for (x = [25, 45, 65], dy = [-12, 12]) translate([x - 2, -45 + dy - 1, -1]) cube([4, 2, floor_h + 2]);
         // feritoie di aerazione nel fondo (zone libere: davanti alla torre e sotto la culla ESP32)
@@ -105,6 +107,17 @@ module lid() {
     }
 }
 
+// Componenti solo visivi per le immagini di montaggio
+module esp32_model() translate([esp_at.x, esp_at.y, esp_z]) {
+    color("#1d5f3a") cube(esp);                                                      // PCB
+    color("Silver") translate([16, 4, esp.z]) cube([25.5, 18, 3.2]);                  // modulo WROOM
+    color("Silver") translate([-1.5, esp.y / 2 - 4, esp.z]) cube([6, 8, 3]);           // micro-USB verso la parete
+    color("#222") for (y = [1.27, esp.y - 1.27 - 2.54]) translate([3, y - 1.27 + (y > 2 ? 0 : 0), -2.5]) cube([esp.x - 6, 2.54, 2.5]);  // file di pin
+}
+module breadboard_model() color("WhiteSmoke") translate([bb_at.x + 1.2 + clr_pocket, bb_at.y + 1.2 + clr_pocket, floor_h]) cube([bb.x, bb.y, 8.5]);
+module wago_model() color("#d9d9d9") for (x = [22, 44], y = [-56, -38]) translate([x, y, floor_h]) cube([18, 12, 8.5]);
+
 if (part == "all") { color("DimGray") tray(); color("Gray") lid(); }
+if (part == "electronics") { color("DimGray") tray(); esp32_model(); breadboard_model(); wago_model(); }
 if (part == "tray") tray();
 if (part == "lid") translate([0, 0, -tray_h]) lid();

@@ -6,8 +6,8 @@
 // Montaggio:
 //  1. SG90 spalla e gomito da FUORI: corpo nella finestra, linguette sulla faccia esterna, viti autofilettanti;
 //  2. squadretta del servo base nella tasca sotto il pavimento, vite centrale dall'alto;
-//  3. cavo pinza/camera: dalla canalina del braccio, nel foro vicino al mozzo, ansa nello spazio tra squadretta
-//     e guancia sinistra, esce dal foro della guancia, scende nel foro del pavimento.
+//  3. cavo pinza/camera: dalla canalina del braccio (lato servo), ansa nello spazio tra squadretta e guancia
+//     sinistra, entra di lato nell'asola della guancia, scende fuori e passa nell'asola del pavimento (docs/02).
 include <params.scad>
 use <lib/parts.scad>
 
@@ -31,7 +31,11 @@ module cheek(side) {
             cube([sg_body.y + 2 * clr_pocket, cheek_t + 2, sg_z[1] - sg_z[0] + 2 * clr_pocket]);
         for (s = [-1, 1]) translate([0, y0 - 1, (sg_z[0] + sg_z[1]) / 2 + s * sg_screw_pitch / 2])
             rotate([-90, 0, 0]) cylinder(d = sg_screw_d - 0.4, h = cheek_t + 2, $fn = 16);
-        if (side < 0) translate([-22, y0 - 1, sh_h]) rotate([-90, 0, 0]) cylinder(d = 6, h = cheek_t + 2);
+        // passaggio cavi pinza/camera: foro + asola aperta sul bordo, il cavo entra di lato (il connettore non passa)
+        if (side < 0) {
+            translate([-22, y0 - 1, sh_h]) rotate([-90, 0, 0]) cylinder(d = 6, h = cheek_t + 2);
+            translate([-33, y0 - 1, sh_h - 1.2]) cube([11, cheek_t + 2, 2.4]);
+        }
     }
     // fazzoletti esterni (lato servo): dentro la torretta non c'è spazio, lì ruota tutto
     for (x = [-24, 24]) translate([x - 1.5, side > 0 ? y0 + cheek_t : y0, floor_t])
@@ -57,7 +61,10 @@ module turret() {
             cylinder(r = groove[1], h = groove[2] + 1, $fn = 128);
             cylinder(r = groove[0], h = groove[2] + 3, $fn = 128);
         }
-        for (p = cable_holes) translate([p.x, p.y, -1]) cylinder(d = 8, h = floor_t + 2);
+        for (p = cable_holes) translate([p.x, p.y, -1]) {   // foro + asola radiale fino al bordo: cavi infilati di lato
+            cylinder(d = 8, h = floor_t + 2);
+            translate([-1.3, p.y > 0 ? 0 : -(floor_r - abs(p.y) + 1), 0]) cube([2.6, floor_r - abs(p.y) + 1, floor_t + 2]);
+        }
         // 4 finestre di alleggerimento: fuori da montante G, guance, gola della corona e squadretta
         for (sx = [-1, 1], sy = [-1, 1]) translate([sx * 32, sy * 16, -1]) cylinder(d = 18, h = floor_t + 2);
     }
