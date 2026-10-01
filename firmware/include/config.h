@@ -41,5 +41,7 @@ constexpr int STATE_MS = 50;  // broadcast stato 20 Hz
 // ---- rete ----
 constexpr unsigned STA_TIMEOUT_MS = 10000;
 #define AP_SSID "BRACCIO"
-#define AP_PASS "braccio-arm"
+#ifndef AP_PASS
+#define AP_PASS "braccio-arm"  // default pubblico (repo open source): cambialo in secrets.h
+#endif
 #define MDNS_NAME "braccio"

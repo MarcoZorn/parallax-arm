@@ -8,15 +8,14 @@
 #include <Preferences.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
-#include "config.h"
-#include "motion.h"
-
 #if __has_include("secrets.h")
-#include "secrets.h"
+#include "secrets.h"  // prima di config.h: può ridefinire AP_PASS
 #else
 #define WIFI_SSID ""  // niente secrets.h: direttamente AP
 #define WIFI_PASS ""
 #endif
+#include "config.h"
+#include "motion.h"
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");

@@ -105,7 +105,7 @@ Dalla cartella del progetto:
 ```bash
 cd web && npm install && npm run build          # scrive la web app compressa in firmware/data/
 cd ../firmware
-cp include/secrets.example.h include/secrets.h  # opzionale: WiFi di casa (altrimenti AP "BRACCIO")
+cp include/secrets.example.h include/secrets.h  # WiFi di casa e password tua per l'AP "BRACCIO" (consigliato)
 ~/.local/bin/pio run -e esp32dev -t upload      # firmware
 ~/.local/bin/pio run -e esp32dev -t uploadfs    # web app su LittleFS
 ```

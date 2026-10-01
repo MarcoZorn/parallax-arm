@@ -3,3 +3,5 @@
 #pragma once
 #define WIFI_SSID ""
 #define WIFI_PASS ""
+// Password dell'AP BRACCIO (min 8 caratteri). Il default "braccio-arm" è pubblico nel repo: mettine una tua.
+#define AP_PASS "cambiami-123"
