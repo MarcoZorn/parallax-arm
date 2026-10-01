@@ -19,8 +19,8 @@ lead_y = (lead_pocket[1] + 2) / 2;               // sedi affiancate, setto di 2 
 // 4 sedi in fila trasversale: baricentro sempre a cw_shoulder_r, la coda non si allunga verso il pavimento
 leads = [for (k = [-3, -1, 1, 3]) [-cw_shoulder_r, k * lead_y]];
 screws = [[-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, lead_y], [-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, -lead_y]];
-rib = [2.5, 6, 12, L1 - 20];  // nervature sulla faccia interna: larghezza, altezza, da x, a x (lontane dal gomito:
-                             // l'avambraccio ripiegato passa sopra gli ultimi ~17 mm). Rigidezza fuori piano x5 (sim/structural)
+rib = [2.5, 6, 12, L1 - 35];  // nervature sulla faccia interna: larghezza, altezza, da x, a x (lontane dal gomito:
+                             // l'avambraccio ripiegato, th2-phi = 150, passa sopra gli ultimi ~35 mm: verificato con check_grid.sh)
 chan_w = 5;                // canalina cavi (pinza SG90 + ESP32-CAM)
 chan_d = 3;
 

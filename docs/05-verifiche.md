@@ -20,7 +20,7 @@ Sono simulazioni e modelli: **nessun pezzo è ancora stato stampato o provato su
 | Collisioni | ✅ | 0 su tutta la griglia, incluso il cedimento della spalla a 17°; controllo negativo verificato |
 | Moto pick&place a v=0.5 e v=1 | ✅ | nessun servo satura, duty max 0.72, overshoot < 0.05°, assestamento < 0.2 s |
 | Precisione dei servo (banda morta + gioco) | ⚠️ | errore statico al TCP 1–6 mm a seconda del carico, errore d'arresto ~0.8–1° |
-| Cedevolezza strutturale | ⚠️ | flessione elastica del TCP con 50 g + camera: **~5.5 mm** in home, **~13 mm** a sbraccio massimo (±30–50 %) |
+| Cedevolezza strutturale | ⚠️ | flessione elastica del TCP con 50 g + camera: **~5.5–6 mm** in home, **~13–14 mm** a sbraccio massimo (±30–50 %; le nervature coprono x 12–45, dove il momento è massimo) |
 | Ripetibilità/accuratezza (Monte Carlo) | ⚠️ | p95 ~15 mm: è un braccio da pick&place di oggetti da 10–50 mm, non da precisione |
 | E-stop (servo sganciati) | ✅ | il braccio scende lentamente, impatto ≤ 0.44 m/s con i piombi |
 | Ingranaggi pinza | ✅ | 2.4 MPa allo stallo, ricoprimento 1.53, nessuna interferenza su tutta la rotazione |
