@@ -30,6 +30,11 @@ constexpr float HOME_DEFAULT[NJ] = {0, 90, 0, 30};
 constexpr float VMAX[NJ] = {90, 90, 90, 60};      // °/s, pinza mm/s
 constexpr float AMAX[NJ] = {180, 180, 180, 120};  // °/s², pinza mm/s²
 
+// enable: un servo agganciato ogni ATTACH_STAGGER_MS, non tutti insieme. Un SG90 che salta alla home
+// assorbe ~0.7 A per 150-250 ms (costante meccanica ~60 ms col braccio): 4 insieme fanno 2.4-2.7 A di picco
+// e portano i servo sotto 4.0 V con cavi USB sottili. Sfalsati: picco ~1.7 A (sim/electrical/out/results.md).
+constexpr int ATTACH_STAGGER_MS = 200;
+
 constexpr int CTRL_MS = 20;   // loop di controllo 50 Hz, uno per frame servo
 constexpr int STATE_MS = 50;  // broadcast stato 20 Hz
 

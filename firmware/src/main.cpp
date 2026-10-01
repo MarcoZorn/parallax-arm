@@ -27,6 +27,8 @@ float home[NJ];
 Planner pl;
 bool enabled = false;
 bool known = false;  // posa nota: dopo il primo enable il planner parte dall'ultima posa comandata
+int attachNext = NJ;  // prossimo servo da agganciare dopo l'enable (NJ: tutti agganciati o nessuno in attesa)
+uint32_t tAttach = 0;
 const char* netMode = "ap";
 
 enum CmdType : uint8_t { C_MOVE, C_STOP, C_ENABLE, C_RAW, C_CAL_GET, C_CAL_SET, C_CAL_SAVE, C_HOME_SET };
@@ -48,9 +50,12 @@ static void writeServos() {
     for (int j = 0; j < NJ; j++) ledcWrite(j, duty(q_to_us(cal[j], pl.q[j])));
 }
 
-static void attachServos() {
-    writeServos();  // il primo impulso è già quello giusto
-    for (int j = 0; j < NJ; j++) ledcAttachPin(PIN_SERVO[j], j);
+// Aggancio sfalsato: chiamata dal loop, un servo ogni ATTACH_STAGGER_MS per non sommare gli spunti
+static void attachStep() {
+    if (attachNext >= NJ || millis() - tAttach < ATTACH_STAGGER_MS) return;
+    ledcAttachPin(PIN_SERVO[attachNext], attachNext);  // duty già scritto: il primo impulso è quello giusto
+    attachNext++;
+    tAttach = millis();
 }
 
 static void detachServos() {
@@ -112,6 +117,7 @@ static void sendState() {
 // ---- comandi (eseguiti nel loop) ----
 
 static void estop() {
+    attachNext = NJ;
     detachServos();
     enabled = false;
     pl.halt();
@@ -122,6 +128,7 @@ static void handle(const Cmd& c) {
     switch (c.t) {
     case C_MOVE:
         if (!enabled) return sendErr(c.client, "disabilitato: manda enable");
+        if (attachNext < NJ) return sendErr(c.client, "enable in corso");
         if (!(c.v > 0 && c.v <= 1)) return sendErr(c.client, "v fuori da (0, 1]");
         if (!check_target(c.q, cal, err, sizeof err)) return sendErr(c.client, err);
         pl.move(c.q, c.v);
@@ -132,11 +139,14 @@ static void handle(const Cmd& c) {
     case C_ENABLE:
         if (enabled) return;
         if (!known) pl.reset(home), known = true;
-        attachServos();
+        writeServos();
+        attachNext = 0;
+        tAttach = millis() - ATTACH_STAGGER_MS;  // il primo subito
         enabled = true;
         break;
     case C_RAW: {
         if (!enabled) return sendErr(c.client, "raw solo con enabled");
+        if (attachNext < NJ) return sendErr(c.client, "enable in corso");
         if (c.j < 0 || c.j >= NJ || !isfinite(c.v)) return sendErr(c.client, "raw: giunto o us non validi");
         if (pl.moving()) return sendErr(c.client, "raw: braccio in moto");
         // il giunto va dove dice l'impulso: la posa resta coerente, il prossimo move parte da qui senza salti
@@ -276,6 +286,7 @@ void loop() {
     if (estopReq) estopReq = false, estop();
     Cmd c;
     while (xQueueReceive(cmdq, &c, 0) == pdTRUE) handle(c);
+    attachStep();
 
     uint32_t now = millis();
     if (now - tCtl >= CTRL_MS) {
