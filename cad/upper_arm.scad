@@ -6,7 +6,7 @@
 //  1. avvita la squadretta doppia nella tasca con le sue viti autofilettanti (fori pilota da fare con la vite);
 //  2. innesta sull'albero SG90 in posizione centrale (90°) con il braccio a 45°, poi vite centrale dal lato z=t;
 //  3. gomito: vite M3x25 dalla faccia z=0, poi avambraccio, poi dado autobloccante, serrato "a scorrimento";
-//  4. 2 piombi da 20 g nelle sedi di coda, coperchio (part="lid"), 2 viti M3x16 con dado nella sede lato z=0.
+//  4. 4 piombi da 20 g nelle sedi di coda, coperchio (part="lid"), 2 viti M3x16 con dado nella sede lato z=0.
 include <params.scad>
 use <lib/parts.scad>
 
@@ -15,8 +15,9 @@ part = "arm";  // arm | lid | all
 t = 6;                     // spessore del braccio
 hub_r = 9;                 // mozzo spalla: contiene la squadretta con >= 1.6 mm di parete
 elbow_r = 7;
-lead_y = (lead_pocket[1] + 2) / 2;               // 2 sedi affiancate, setto di 2 mm
-leads = [[-cw_shoulder_r, lead_y], [-cw_shoulder_r, -lead_y]];
+lead_y = (lead_pocket[1] + 2) / 2;               // sedi affiancate, setto di 2 mm
+// 4 sedi in fila trasversale: baricentro sempre a cw_shoulder_r, la coda non si allunga verso il pavimento
+leads = [for (k = [-3, -1, 1, 3]) [-cw_shoulder_r, k * lead_y]];
 screws = [[-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, lead_y], [-cw_shoulder_r - lead_pocket[0] / 2 - 4.5, -lead_y]];
 chan_w = 5;                // canalina cavi (pinza SG90 + ESP32-CAM)
 chan_d = 3;
