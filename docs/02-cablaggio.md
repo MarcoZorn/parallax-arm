@@ -16,7 +16,7 @@ Il 5V dei servo arriva ai WAGO direttamente dal caricatore e non passa mai né d
       │              │          │ WAGO +5V (5 poli) │   │ WAGO GND (5 poli) │
       │  GND ────────┼──────────┼───────────────────┼───┤◄── massa comune    │
       │              │          │ ◄ rosso USB       │   │ ◄ nero USB        │
-      │  GPIO33 ─┐   │          │ ◄ + cond. 1000µF  │   │ ◄ – cond. (banda) │
+      │  GPIO33 ─┐   │          │ ◄ + cond. 2200µF  │   │ ◄ – cond. (banda) │
       │  GPIO25 ─┤   │          │ ◄ rosso servo 1-2 │   │ ◄ marrone 1-2     │
       │  GPIO26 ─┤   │          └───────────────────┘   └───────────────────┘
       │  GPIO27 ─┤   │          ┌───────────────────┐   ┌───────────────────┐
@@ -60,15 +60,19 @@ Un'alternativa più pulita sono le prolunghe servo da 30 cm con un'estremità ta
 
 | Cosa | Perché |
 |---|---|
-| **Massa comune** (GND ESP32 → WAGO GND) | Senza, il segnale PWM non ha riferimento e i servo impazziscono. È l'errore n.1 |
-| **Condensatore 1000–2200 µF ≥10V** sul bus WAGO | Assorbe lo spunto dei servo. **Polarità**: la banda con il "–" va al GND |
+| **Massa comune** con un jumper dedicato dal pin GND del DevKit **direttamente** al WAGO GND (non dalla guida della breadboard) | Senza, il segnale PWM non ha riferimento e i servo impazziscono. È l'errore n.1. Dal jumper passa parte del ritorno dei servo (fino a 0.9 A): non deve attraversare la breadboard |
+| **Condensatore 2200 µF 10–16 V low-ESR** sul bus WAGO | Copre il chopping dei servo e i fronti: senza, il 3V3 dell'ESP32 scende a 2.8 V. **Polarità**: la banda con il "–" va al GND |
+| **Cavo della porta B corto e grosso**: un cavo USB-C "3A" accorciato a **30–50 cm** | È la scelta che conta di più. Con un cavo da 1 m a fili sottili la caduta arriva a 1.3 V e i servo vanno in reset (< 4 V). Prova: con un servo bloccato a mano la tensione al WAGO deve restare ≥ 4.6 V |
 | **Pull-down 10 kΩ** tra ogni riga segnale e GND in breadboard | Durante il boot i GPIO sono flottanti e i servo scattano. Con il pull-down la linea resta bassa, niente impulsi, servo fermi |
 | **Porte USB separate** per logica e servo | Un calo di tensione dei servo non resetta l'ESP32 |
 | **Nessuna corrente servo in breadboard** | Le guide reggono circa 1 A e i contatti scaldano. In breadboard passano solo segnali e i 10 kΩ |
 
 E-stop:
 - **Software:** il firmware smette di generare gli impulsi (LEDC detach) e gli SG90 restano senza coppia.
-- **Hardware:** stacca il cavo USB della porta B, cioè l'alimentazione dei servo. Se vuoi un pulsante, un interruttore a levetta con morsetti a vite in serie al rosso della porta B, sempre senza saldare.
+- **Hardware:** un interruttore a levetta con morsetti a vite **a valle del condensatore**: WAGO 1 con cavo B e condensatore → interruttore → WAGO 2 con i servo. Così il condensatore resta carico e la chiusura non fa spunto.
+  **Non** staccare e riattaccare il cavo B a ESP32 acceso: il condensatore scarico tira 7–9 A e resetta l'ESP32.
+- **All'enable** il firmware aggancia i servo **uno ogni 200 ms**: il picco scende da ~2.7 A a ~1.7 A. Un `move` mandato nei primi ~0.6 s riceve "enable in corso".
+- **Pinza:** non comandarla chiusa a 0 mm su un oggetto. In stallo pieno l'SG90 assorbe 0.7 A e in 5 minuti l'avvolgimento supera i 120 °C. Comandala alla **larghezza dell'oggetto meno ~1.5 mm** (≈ 2–3° di servo): presa sufficiente e 52 °C a regime.
 
 ## Budget corrente
 
@@ -79,7 +83,9 @@ E-stop:
 | Caso peggiore teorico (tutti in stallo) | 4 × 0.75 = **3 A** |
 | ESP32-CAM (futuro, dal bus WAGO) | picchi ~0.3 A |
 
-→ Caricatore **5V ≥ 3A**. Se ne hai solo uno da 2A funziona lo stesso, ma solo con rampe lente e senza tenere la pinza stretta sotto carico.
+→ Caricatore **5V con almeno 3 A per porta**: meglio due regolatori indipendenti, oppure due caricatori con la massa comune via jumper.
+Un 2A basta per muoversi, ma non per gli stalli né per la pinza stretta: lì limita a 2.2 A e porta l'ESP32 in brownout.
+I dettagli e gli scenari simulati sono in `sim/electrical/` (`python3 sim/electrical/run_all.py`).
 
 ## Checklist prima di dare corrente
 
