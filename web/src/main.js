@@ -462,6 +462,14 @@ $('gR').addEventListener('input', () => setG(+$('gR').value));
 $('gN').addEventListener('change', () => setG(+$('gN').value));
 $('bOpen').onclick = () => setG(R.cal[3].max);
 $('bClose').onclick = () => setG(R.cal[3].min);
+// presa a posizione: 1.5 mm sotto l'oggetto bastano per ~2.5 N per dito a ~0.4 A; chiudere a 0 lo terrebbe in stallo
+// (0.7 A, >120 °C in pochi minuti: sim/electrical)
+const GRIP_SQUEEZE = 1.5;
+$('bGrip').onclick = () => {
+  const w = +$('objN').value;
+  if (!Number.isFinite(w)) return;
+  setG(Math.max(R.cal[3].min, Math.min(R.cal[3].max, w - GRIP_SQUEEZE)));
+};
 $('bHome').onclick = () => command([...R.HOME]);
 $('bEnable').onclick = enable;
 $('bStop').onclick = stop;

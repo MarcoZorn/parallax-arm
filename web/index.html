@@ -64,9 +64,14 @@
           <input type="range" id="gR" min="0" max="59" step="0.5" />
           <input type="number" id="gN" min="0" max="59" step="0.5" class="num" aria-label="Apertura pinza in mm" />
         </div>
+        <div class="row">
+          <label for="objN">Oggetto <span class="muted">mm</span></label>
+          <input type="number" id="objN" min="2" max="59" step="0.5" value="25" class="num" aria-label="Larghezza dell'oggetto da prendere in mm" />
+          <button id="bGrip" class="btn" title="Chiude a larghezza oggetto − 1.5 mm: presa salda senza tenere il servo in stallo">Prendi</button>
+        </div>
         <div class="row btns">
           <button id="bOpen" class="btn">Apri</button>
-          <button id="bClose" class="btn">Chiudi</button>
+          <button id="bClose" class="btn" title="Chiusura completa: solo a pinza vuota (su un oggetto il servo resterebbe in stallo e scalda)">Chiudi (vuota)</button>
         </div>
       </section>
 
