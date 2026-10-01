@@ -46,7 +46,7 @@ int main() {
     }
     printf("check_target: 2e6 casi, %ld accettati\n", acc);
 
-    // check_cal: rifiuta NaN/inf, k=0, |k|<1, ref_us fuori [500,2500], min>=max; non si pronuncia sui valori enormi
+    // check_cal: rifiuta NaN/inf, k=0, |k|<1, ref_us fuori [500,2500], min>=max, limiti oltre Q_MIN/Q_MAX
     long calOk = 0, calHuge = 0;
     for (int i = 0; i < 500000; i++) {
         Cal c[NJ];
@@ -58,7 +58,8 @@ int main() {
         bool ok = check_cal(c, err, sizeof err);
         const Cal& x = c[j];
         bool sane = isfinite(x.ref_us) && isfinite(x.k) && isfinite(x.q_ref) && isfinite(x.min) && isfinite(x.max) && x.ref_us >= 500 &&
-                    x.ref_us <= 2500 && fabsf(x.k) >= 1 && x.min < x.max;
+                    x.ref_us <= 2500 && fabsf(x.k) >= 1 && x.min < x.max &&
+                    x.min >= Q_MIN[j] - 0.001f && x.max <= Q_MAX[j] + 0.001f;  // limiti dentro la meccanica
         CHECK(ok == sane, "check_cal giunto %d: ok=%d atteso=%d", j, ok, sane);
         if (ok) {
             calOk++;
