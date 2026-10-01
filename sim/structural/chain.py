@@ -1,3 +1,4 @@
+import pathlib
 """Catena cinematica perturbata + modello di cedevolezza (elastica) del braccio.
 
 solve(): risolve in forma esatta (Newton vettoriale) i due parallelogrammi con lunghezze, giochi e spostamenti
@@ -35,10 +36,20 @@ def comp(rects):
     return A, yc, I
 
 
+import re as _re
+_CAD = pathlib.Path(__file__).resolve().parents[2] / "cad"
+_ua = (_CAD / "upper_arm.scad").read_text()
+# larghezza del braccio a metà luce = hub_r + elbow_r (inviluppo di due cerchi), letta dal CAD
+ARM_W = float(_re.search(r"^hub_r = ([0-9.]+);", _ua, _re.M).group(1)) + float(_re.search(r"^elbow_r = ([0-9.]+);", _ua, _re.M).group(1))
+# fazzoletti delle guance (profondità, altezza) letti da turret.scad
+_fin = _re.search(r"polygon\(side > 0 \? \[\[0, 0\], \[([0-9.]+), 0\], \[0, ([0-9.]+)\]\]", (_CAD / "turret.scad").read_text())
+FIN_D, FIN_H = float(_fin.group(1)), float(_fin.group(2))
+
+
 def arm_section(rib=0.0, rib_w=2.5):
     """Braccio a metà luce, flessione FUORI piano (altezza = spessore t lungo Y, stampato in piano).
     Lastra 16 x 6 con canalina 5 x 3 sul lato servo; nervature laterali opzionali alte 'rib' sul lato servo."""
-    t, w, cw, cd = 6.0, 16.0, 5.0, 3.0
+    t, w, cw, cd = 6.0, ARM_W, 5.0, 3.0
     tb, pr, ki = MAT["skin_tb"], MAT["perim"], MAT["infill_E"] - 1
     r = [(w, t, 0, 1), (cw, cd, 0, -1),
          # nucleo a gyroid: blocchi laterali e sotto la canalina (fuori dal guscio)
@@ -50,9 +61,12 @@ def arm_section(rib=0.0, rib_w=2.5):
     return dict(A=A, yc=yc - t / 2, I=I)   # yc: spostamento del baricentro dalla mezzeria della lastra
 
 
-ARM = arm_section()
-ARM_I_IN = C.rect_I(6, 16, perim_b=MAT["skin_tb"], perim_h=MAT["perim"])     # nel piano (altezza 16)
-ARM_J = C.bredt_J(16, 6, MAT["skin_tb"], MAT["perim"])
+# nervature del braccio lette dal CAD (rib = [larghezza, altezza, da x, a x]); il modello le mette su una faccia,
+# per I fuori piano il lato conta poco (sezione quasi simmetrica)
+_rib = _re.search(r"^rib = \[([0-9.]+), ([0-9.]+),", _ua, _re.M)
+ARM = arm_section(rib=float(_rib.group(2)), rib_w=float(_rib.group(1))) if _rib else arm_section()
+ARM_I_IN = C.rect_I(6, ARM_W, perim_b=MAT["skin_tb"], perim_h=MAT["perim"])     # nel piano
+ARM_J = C.bredt_J(ARM_W, 6, MAT["skin_tb"], MAT["perim"])
 G_XY = MAT["E_xy"] / (2 * (1 + MAT["nu"]))
 G_Z = MAT["E_z"] / (2 * (1 + MAT["nu"]))
 
@@ -75,10 +89,12 @@ def _cheek_width():
     return w
 
 
-def cheek_compliance(fin_h=25.0, fin_d=10.0, t=None):
+def cheek_compliance(fin_h=None, fin_d=None, t=None):
     """Rotazione per unità di momento al livello del servo: flessione attorno a X (stress verticale = tra layer)
     e torsione attorno a Z. Fazzoletti esterni fin_d x fin_h a x = +-24 (rigidi a torsione nella loro altezza)."""
     w = _cheek_width()
+    fin_h = FIN_H if fin_h is None else fin_h
+    fin_d = FIN_D if fin_d is None else fin_d
     t = P["cheek_t"] if t is None else t
     ft, z0 = 3.0, P["floor_t"]
     z_srv = P["sh_h"] - (P["sg_body"][0] - P["sg_shaft_x"]) - 2   # vite inferiore della linguetta, circa

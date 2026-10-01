@@ -105,13 +105,13 @@ await test('move fuori vincolo / fuori limiti / v non valido / q corto: rifiutat
   assert.ok(near(c.state.q, q0) && !c.state.moving);
 });
 
-await test('target sul bordo arrotondato a 0.01 (th2-phi = 20.00, in float 19.999998): accettato', async () => {
+await test('target sul bordo arrotondato a 0.01 (th2-phi = 35.00, in float 34.999996): accettato', async () => {
   const n0 = c.errs.length;
-  c.l.move([0, 40.01, 20.01, 30], 1); // rifiutato dal firmware prima della tolleranza
+  c.l.move([0, 64.02, 29.02, 30], 1); // rifiutato dal firmware prima della tolleranza
   await until(() => c.state.moving, 500);
   await until(() => !c.state.moving, 5000);
   assert.equal(c.errs.length, n0);
-  assert.ok(near(c.state.q, [0, 40.01, 20.01, 30]));
+  assert.ok(near(c.state.q, [0, 64.02, 29.02, 30]));
 });
 
 await test('stop a metà moto: decelera e tiene la posizione', async () => {

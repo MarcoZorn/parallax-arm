@@ -85,8 +85,10 @@ check('UI reattiva dopo i messaggi', (await ev('1 + 1')) === 2);
 D.dev.sendCal(0);
 D.dev.pl.q = [10, 100, 20, 30]; // il prossimo state del device porta questa posa
 D.dev.pl.target = [10, 100, 20, 30];
-await sleep(300);
-check('state valido dopo i malformati: HUD aggiornato', (await ev('document.getElementById("fk0o").textContent')) === '10.0');
+// l'HUD si aggiorna nel ciclo di rendering: con WebGL software e i modelli reali un fotogramma può superare i 300 ms
+const hudOk = async () => (await ev('document.getElementById("fk0o").textContent')) === '10.0';
+for (let t = 0; t < 5000 && !(await hudOk()); t += 100) await sleep(100);
+{ const hud = await ev('document.getElementById("fk0o").textContent'); check('state valido dopo i malformati: HUD aggiornato', hud === '10.0', 'HUD=' + hud); }
 
 // ---- comandi dalla UI ----
 await sleep(200); // gli state veri del device riprendono il controllo

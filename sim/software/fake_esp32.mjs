@@ -10,7 +10,7 @@ import { dirname, join, normalize } from 'node:path';
 import { Motion } from '../../web/src/motion.js';
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'firmware', 'data');
-const NJ = 4, US_MIN = 500, US_MAX = 2500, PAR = [20, 150], TOL = 1e-3, CTRL_MS = 20, STATE_MS = 50, QLEN = 16;
+const NJ = 4, US_MIN = 500, US_MAX = 2500, PAR = [35, 150], TOL = 1e-3, CTRL_MS = 20, STATE_MS = 50, QLEN = 16;
 const NAME = ['q1', 'th2', 'phi', 'g'];
 const f32 = Math.fround;
 const g = (x) => String(+f32(x).toPrecision(6)); // %g

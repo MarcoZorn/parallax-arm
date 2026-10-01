@@ -11,14 +11,14 @@ e 4 sulla coda del braccio (punto di progetto di docs/01).
 
 | verifica | ESITO | in breve |
 |---|---|---|
-| 1. Link e bielle: tensioni e freccia al TCP | **KO** | tensioni OK nei link (SF din min 1.9), dito ganascia SF 0.9 allo stallo; freccia TCP statica 13.7 mm in home, 54 mm a sbraccio |
+| 1. Link e bielle: tensioni e freccia al TCP | **KO** | tensioni OK nei link (SF din min 1.9), dito ganascia SF 2.7 allo stallo; freccia TCP statica 5.5 mm in home, 26 mm a sbraccio |
 | 2. Perni M3, fori e alberi dei servo | **KO** | perno E: p bordo din 47.9 MPa, vite 724 MPa; momento albero spalla 708 N·mm statico |
-| 3. Pignone e cremagliere m1 + controlli STL | **KO** | denti OK (σ pignone 2.4 MPa allo stallo); ricoprimento 1.53 col gioco; ganasce: coda di rondine staccata dal corpo |
+| 3. Pignone e cremagliere m1 + controlli STL | **OK** | denti OK (σ pignone 2.4 MPa allo stallo); ricoprimento 1.53 col gioco; ganasce: ok |
 | 4. Code di rondine: attrito e impuntamento | **riserva** | presa 1.9 N/dito con μ 0.35 (rendimento 0.40), richiesti 1.6 N; impuntamento solo con μ > 1.08 |
-| 5. Incastri a scatto (culla ESP32) | **KO** | ε 0.07% (ok), P(scheda non trattenuta) 47% |
-| 6. Autofilettanti e dadi incassati | **KO** | estrazione OK; sedi dadi: due sedi fuse nel piano pinza, parete minima 0.55 mm |
+| 5. Incastri a scatto (culla ESP32) | **OK** | ε 0.20% (ok), P(scheda non trattenuta) 0% |
+| 6. Autofilettanti e dadi incassati | **riserva** | estrazione OK; sedi dadi: ok, parete minima 0.55 mm |
 | 7. Scorrimento viscoso e temperatura | **KO** | servo gomito in home 50 g: +59 K; freccia TCP x1.4 dopo 100 h a 23 °C |
-| 8. Monte Carlo delle tolleranze | **KO** | home: accuratezza p95 19.2 mm, RP p95 15.1 mm (scenario B); squadretta non entra 28%, SG90 nelle guance 37% |
+| 8. Monte Carlo delle tolleranze | **KO** | home: accuratezza p95 16.2 mm, RP p95 14.9 mm (scenario B); squadretta non entra 0%, SG90 nelle guance 10% |
 
 Il quadro in una riga: **i pezzi non si rompono, il braccio è cedevole**. Le tensioni sono basse quasi ovunque (eccezioni: il
 dito della ganascia, il perno E e gli alberi dei servo). La rigidezza invece è dominata dall'eccentricità di ~33 mm tra il piano
@@ -36,7 +36,7 @@ ESITO sul dinamico: OK se SF ≥ 2, riserva se 1.2–2, KO sotto.
 
 | membro | posa peggiore th2/phi | σ stat MPa | σ din MPa | σ stallo MPa | amm. MPa | SF din | ESITO | nota |
 |---|---|---|---|---|---|---|---|---|
-| braccio (in piano) | 20/0 | 9.73 | 19.47 | 21.91 | 50 | 2.6 | OK | flessione nel piano + fuori piano + torsione, sezione al foro cavo x=20 |
+| braccio (in piano) | 20/0 | 2.97 | 5.95 | 6.69 | 50 | 8.4 | OK | flessione nel piano + fuori piano + torsione, sezione al foro cavo x=20 |
 | avambraccio piastra R (di fianco) | 60/0 | 0.90 | 1.80 | 2.02 | 50 | 27.8 | OK | momento della leva B al perno E |
 | avambraccio taglio tra layer | 20/0 | 0.34 | 0.68 | 0.77 | 15 | 22.0 | OK | taglio all'asse neutro = piano dei layer |
 | biella motrice (assiale) | 20/0 | 1.18 | 2.36 | 2.65 | 50 | 21.2 | OK | sezione netta all'occhio |
@@ -48,10 +48,10 @@ ESITO sul dinamico: OK se SF ≥ 2, riserva se 1.2–2, KO sotto.
 | guancia spalla (in piedi) | 55/35 | 5.33 | 10.65 | 7.20 | 27 | 2.5 | OK | flessione fuori piano sopra i fazzoletti |
 | guancia spalla torsione | 20/0 | 3.88 | 7.76 | 8.74 | 15 | 1.9 | riserva | torsione attorno a Z |
 | staffa polso (leva V) | 20/-70 | 0.49 | 0.99 | 1.11 | 50 | 50.5 | OK |  |
-| dito ganascia: torsione gambo | presa | 13.28 | - | 16.60 | 15 | 0.9 (stallo) | KO | gambo 3.5 x 4, leva 29 mm, taglio sui piani dei layer |
+| dito ganascia: torsione gambo | presa | 4.45 | - | 5.56 | 15 | 2.7 (stallo) | OK | gambo 6 x 5, leva 30 mm, taglio sui piani dei layer |
 
-Dito ganascia: freccia sotto la presa di stallo 3.17 mm. Con gambo 6 mm e dito spesso 5 mm il taglio
-scende da 16.6 a 5.6 MPa (SF 2.7).
+Dito ganascia: freccia sotto la presa di stallo 0.82 mm. Con gambo 6 mm e dito spesso 5 mm il taglio
+scende da 5.6 a 5.6 MPa (SF 2.7).
 
 **Tensioni basse ovunque, tranne il dito.** I link reggono con margini ampi: il problema è la **rigidezza**.
 
@@ -65,37 +65,37 @@ della biella di θ·Δy lungo il braccio, e il parallelogramma lo trasforma in u
 
 | posa | dx | dz | dy | |δ| statico | |δ| x2 | A: nervature braccio 6 mm + fazzoletti 50 mm |δ| | B: A + mozzo E 14 mm e perno d4 |δ| |
 |---|---|---|---|---|---|---|---|
-| home (90/0, e=90) | -2.07 | -13.40 | +1.71 | 13.66 | 27.33 | 5.94 | 4.49 |
-| sbraccio (20/0, e=20) | -19.39 | -47.42 | +15.51 | 53.53 | 107.06 | 27.18 | 20.52 |
-| basso (35/-60, e=95) | -7.53 | -6.26 | +1.32 | 9.88 | 19.75 | 4.42 | 3.33 |
-| alto (130/50, e=80) | +3.89 | -8.31 | +1.70 | 9.33 | 18.67 | 4.12 | 3.11 |
-| ripiegato (150/0, e=150) | -16.74 | -52.63 | -4.24 | 55.39 | 110.78 | 19.27 | 13.35 |
+| home (90/0, e=90) | -0.68 | -5.44 | +0.59 | 5.51 | 11.02 | 5.84 | 4.39 |
+| sbraccio (20/0, e=20) | -7.25 | -25.18 | +3.77 | 26.47 | 52.94 | 26.70 | 20.00 |
+| basso (35/-60, e=95) | -3.14 | -2.86 | +0.23 | 4.25 | 8.50 | 4.34 | 3.25 |
+| alto (130/50, e=80) | +1.59 | -3.44 | +0.72 | 3.85 | 7.70 | 4.02 | 3.01 |
+| ripiegato (150/0, e=150) | -2.76 | -18.15 | -0.81 | 18.37 | 36.75 | 18.80 | 12.93 |
 
 Contributi (modulo del solo contributo, mm):
 
 | posa | braccio | perno E | guancia/albero spalla | manovella/guancia gomito | giunti A/B | bielle | giunti livellamento | montante G |
 |---|---|---|---|---|---|---|---|---|
-| home | 4.80 | 1.75 | 6.12 | 0.70 | 0.26 | 0.03 | 0.06 | 0.00 |
-| sbraccio | 27.46 | 10.99 | 21.68 | 3.70 | 2.15 | 0.22 | 0.37 | 1.44 |
-| basso | 3.98 | 1.33 | 3.75 | 0.26 | 0.13 | 0.04 | 0.18 | 0.41 |
-| alto | 3.51 | 1.26 | 4.00 | 0.39 | 0.17 | 0.02 | 0.10 | 0.14 |
-| ripiegato | 17.76 | 5.88 | 14.60 | 2.05 | 1.06 | 0.10 | 0.18 | 0.61 |
+| home | 0.96 | 1.75 | 2.17 | 0.31 | 0.26 | 0.03 | 0.06 | 0.00 |
+| sbraccio | 6.48 | 10.99 | 8.45 | 1.87 | 2.15 | 0.22 | 0.37 | 1.44 |
+| basso | 0.79 | 1.33 | 1.32 | 0.13 | 0.13 | 0.04 | 0.18 | 0.41 |
+| alto | 0.76 | 1.26 | 1.41 | 0.18 | 0.17 | 0.02 | 0.10 | 0.14 |
+| ripiegato | 3.27 | 5.88 | 4.81 | 0.97 | 1.06 | 0.10 | 0.18 | 0.61 |
 
 Effetto di e minimo (sbraccio con avambraccio orizzontale):
 
 | lim e min ° | sbraccio mm | |δ| attuale | |δ| variante B | biella motrice N |
 |---|---|---|---|---|
-| 20 | 197 | 53.5 | 20.5 | 12.7 |
-| 30 | 191 | 34.6 | 12.0 | 8.7 |
-| 35 | 188 | 29.1 | 9.8 | 7.6 |
-| 45 | 179 | 22.1 | 7.3 | 6.2 |
+| 20 | 197 | 26.5 | 20.0 | 12.7 |
+| 30 | 191 | 15.6 | 11.7 | 8.7 |
+| 35 | 188 | 12.7 | 9.6 | 7.6 |
+| 45 | 179 | 9.3 | 7.1 | 6.2 |
 
 ![freccia](out/v1_freccia.png)
 
 Ipotesi del modello (da tarare con una prova): rigidezza di bordo dei fori 1600 N/mm per mm, albero SG90
 6e+04 N·mm/rad, guance come lastre 3 mm (fazzoletti rigidi a torsione), vite E con nocciolo d 2.39.
 Prova consigliata: in `home` con 50 g in pinza misura l'abbassamento del TCP con un calibro a corsoio sul tavolo:
-il modello prevede 13.7 mm, di cui la parte da braccio+guancia+albero sparisce se premi a mano il gomito verso il servo.
+il modello prevede 5.5 mm, di cui la parte da braccio+guancia+albero sparisce se premi a mano il gomito verso il servo.
 
 
 ## 2. Perni M3, fori e alberi dei servo — KO
@@ -153,7 +153,7 @@ albero gomito → manovella): la forza radiale non è "< 1.5 N" come in docs/01,
 a 38 mm.
 
 
-## 3. Pignone e cremagliere m1 + controlli STL — KO
+## 3. Pignone e cremagliere m1 + controlli STL — OK
 
 Pignone m1 z32 (r 16.0), due cremagliere: F tangenziale = T/(2r) per dente. Fascia utile 5.7 mm
 (sovrapposizione pignone/cremagliera). Lewis: Y pignone 0.365, cremagliera 0.485.
@@ -184,10 +184,10 @@ area a sbalzo oltre 45° e 60° dalla verticale e soffitti orizzontali (mm², pi
 | parte | gusci | sbalzo >45° mm² | >60° mm² | soffitti mm² |  |
 |---|---|---|---|---|---|
 | 00_tolerance_coupon | 27 | 0 | 0 | 710 |  |
-| 01_base_tray | 1 | 21 | 14 | 89 |  |
-| 03_turret | 1 | 37 | 21 | 829 |  |
+| 01_base_tray | 1 | 21 | 14 | 92 |  |
+| 03_turret | 1 | 37 | 21 | 860 |  |
 | 02_base_lid | 2 | 0 | 0 | 473 | labbro appoggiato sul piano (a contatto: in stampa si fonde) |
-| 04_upper_arm | 1 | 0 | 0 | 493 |  |
+| 04_upper_arm | 1 | 0 | 0 | 489 |  |
 | 05_upper_arm_lid | 1 | 0 | 0 | 0 |  |
 | 06_crank | 1 | 0 | 0 | 1685 |  |
 | 07_crank_lid | 1 | 0 | 0 | 0 |  |
@@ -204,12 +204,6 @@ area a sbalzo oltre 45° e 60° dalla verticale e soffitti orizzontali (mm², pi
 | 18_gripper_pinion | 1 | 0 | 0 | 144 |  |
 | 19_gripper_jaw_x2 | 1 | 187 | 187 | 0 |  |
 | 20_esp32cam_cradle | 1 | 90 | 90 | 16 |  |
-
-**Difetto CAD nelle ganasce:** in `rack()` la coda di rondine è `offset(delta = -clr_slide)` del trapezio, quindi anche il
-lato attaccato al corpo arretra di 0.3 mm: a metà cremagliera la sezione ha 2 contorni separati,
-tra coda di rondine e corpo resta una fessura di 0.3 mm. La coda di rondine è attaccata solo all'estremità,
-dove tocca il gambo del dito (un'unione di 0.75 x 4 mm): in uso si stacca o flette, e la cremagliera non è guidata. Il provino (`tolerance_coupon.scad`, `sliders()`) ha il collo,
-la cremagliera no.
 
 
 ## 4. Code di rondine: attrito e impuntamento — riserva
@@ -241,7 +235,7 @@ gradino dei layer da 0.2 mm (creste da 0.10 mm): i primi movimenti le spianano.
 ![presa](out/v4_presa.png)
 
 
-## 5. Incastri a scatto (culla ESP32) — KO
+## 5. Incastri a scatto (culla ESP32) — OK
 
 Lamella 2 x 5 mm alta 32.2 mm (dente a 29.7 mm dal fondo), stampata in piedi:
 la tensione di flessione al piede è verticale, cioè **tra i layer** (E 2600 MPa, allungamento a rottura ~1%,
@@ -250,7 +244,7 @@ snap_hook − clr_pocket al PCB nominale (28.3 mm). Forze per **due** ganci.
 
 | snap_hook mm | sovrapposizione mm | ε al piede % | forza laterale N | inserimento N (2 ganci) | sfilamento N (2 ganci) | P(non trattiene) % | P(ε > 1%) % |
 |---|---|---|---|---|---|---|---|
-| 0.4 | 0.20 | 0.07 | 0.20 | 0.21 | 7.3 | 46.9 | 0.00 |
+| 0.8 | 0.60 | 0.20 | 0.60 | 0.90 | 18.6 | 0.0 | 0.00 |
 | 0.6 | 0.40 | 0.14 | 0.40 | 0.51 | 13.4 | 1.7 | 0.00 |
 | 0.8 | 0.60 | 0.20 | 0.60 | 0.90 | 18.6 | 0.0 | 0.00 |
 
@@ -262,7 +256,7 @@ da 0.4 mm è al limite di ciò che un ugello da 0.4 riproduce. Il rischio non è
 (i Dupont tirano la scheda verso il basso: lì la spingono contro gli appoggi, quindi il gancio lavora poco in esercizio).
 
 
-## 6. Autofilettanti e dadi incassati — KO
+## 6. Autofilettanti e dadi incassati — riserva
 
 Estrazione: taglio su un cilindro di diametro medio tra vite e preforo, sui piani dei layer
 (τ 15 MPa), filetto formato proporzionale a (d − preforo). Il carico è x2. Viti delle linguette:
@@ -293,15 +287,12 @@ ESITO: OK ≥ 1.2 mm (3 perimetri), riserva sotto, KO se le sedi si toccano.
 | triangolo (P1, U) | (-20.0, 0.0) | 1.59 | 4.0 |  | OK |
 | triangolo (P1, U) | (0.0, -30.0) | 1.59 | 4.0 |  | OK |
 | avambraccio piastra R (B) | (-20.0, 0.0) | 3.59 | 9.0 |  | OK |
-| coda braccio (coperchio) | (-45.9, -8.1) | 0.63 | 1.6 |  | riserva |
-| coda braccio (coperchio) | (-45.9, 8.1) | 0.63 | 1.6 |  | riserva |
-| manovella (coperchio) | (22.0, -13.9) | 0.59 | 1.5 |  | riserva |
-| manovella (coperchio) | (22.0, 13.9) | 0.59 | 1.5 |  | riserva |
-| piano pinza (staffa) | (18.0, -1.5) | 0.55 | 1.4 | **due sedi fuse** | KO |
-
-**Piano pinza:** le due viti della staffa sono a x_back + 3.5 e x_back + 8.5, cioè a 5 mm di interasse.
-Un dado M3 è largo 5.5 mm sulle chiavi: due dadi non ci stanno (si sovrappongono di
-0.5 mm) e le due sedi esagonali nel CAD sono fuse in una.
+| coda braccio (coperchio) | (-45.9, -8.1) | 1.55 | 3.9 |  | OK |
+| coda braccio (coperchio) | (-45.9, 8.1) | 1.55 | 3.9 |  | OK |
+| manovella (coperchio) | (22.0, -13.9) | 1.59 | 4.0 |  | OK |
+| manovella (coperchio) | (22.0, 13.9) | 1.59 | 4.0 |  | OK |
+| piano pinza (staffa) | (15.5, -1.5) | 0.55 | 1.4 |  | riserva |
+| piano pinza (staffa) | (23.0, -1.5) | 1.05 | 2.6 |  | riserva |
 
 
 ## 7. Scorrimento viscoso e temperatura — KO
@@ -338,19 +329,19 @@ Freccia del TCP sotto carico costante (mm; la parte dell'albero del servo non sc
 
 | posa | elastica | 23 °C 8 h | 23 °C 100 h | 40 °C 8 h | 40 °C 100 h | 50 °C 8 h | 50 °C 100 h |
 |---|---|---|---|---|---|---|---|
-| home, 50 g + camera | 13.7 | 16.6 | 19.2 | 24.9 | 33.7 | 42.0 | 62.4 |
-| sbraccio, 50 g + camera | 53.5 | 65.2 | 75.4 | 97.9 | 132.2 | 165.2 | 245.1 |
+| home, 50 g + camera | 5.5 | 6.5 | 7.4 | 9.4 | 12.3 | 15.2 | 22.2 |
+| sbraccio, 50 g + camera | 26.5 | 31.4 | 35.7 | 45.1 | 59.6 | 73.5 | 107.1 |
 
 Tensioni sostenute in `home` contro il limite a lungo termine (30% della rottura, ridotto con E(T); fori: 10 MPa):
 
 | dove | valore MPa | T locale °C | limite MPa | ESITO |
 |---|---|---|---|---|
-| braccio (fuori piano), home | 3.6 | 23 | 15.0 | OK |
+| braccio (fuori piano), home | 1.0 | 23 | 15.0 | OK |
 | foro E nel braccio, bordo | 9.0 | 23 | 10.0 | riserva |
 | foro A nella manovella, bordo | 5.3 | 23 | 10.0 | OK |
 | guancia spalla attorno al servo | 3.2 | 23 | 8.1 | OK |
 | guancia gomito attorno al servo | 1.0 | 82 | 0.0 | KO |
-| dito che stringe a stallo per ore | 13.3 | 23 | 4.5 | KO |
+| dito che stringe a stallo per ore | 4.4 | 23 | 4.5 | riserva |
 
 I piombi non sono un problema di scorrimento: 20 g ciascuno, tensioni nelle sedi < 0.1 MPa. Lo sono indirettamente: tengono
 il braccio bilanciato, quindi la spalla in home lavora a coppia quasi nulla e resta fredda.
@@ -381,14 +372,14 @@ Scenario A: l'anello del servo compensa il gioco degli ingranaggi (il potenziome
 
 | scenario | posa | accuratezza mediana mm | accuratezza p95 mm | RP mediana mm | RP p95 mm |
 |---|---|---|---|---|---|
-| anello chiuso | home | 13.5 | 18.6 | 7.6 | 11.6 |
-| anello chiuso | sbraccio | 56.3 | 66.0 | 12.3 | 18.8 |
-| anello chiuso | basso | 12.6 | 17.1 | 9.1 | 14.2 |
-| anello chiuso | alto | 13.0 | 16.0 | 2.6 | 4.0 |
-| gioco SG90 non compensato | home | 14.3 | 19.2 | 10.4 | 15.1 |
-| gioco SG90 non compensato | sbraccio | 58.9 | 68.0 | 16.5 | 24.3 |
-| gioco SG90 non compensato | basso | 14.1 | 18.7 | 12.3 | 18.0 |
-| gioco SG90 non compensato | alto | 14.1 | 17.3 | 3.5 | 5.2 |
+| anello chiuso | home | 10.5 | 15.3 | 7.5 | 11.5 |
+| anello chiuso | sbraccio | 40.4 | 47.2 | 12.2 | 18.6 |
+| anello chiuso | basso | 11.5 | 15.8 | 9.0 | 14.0 |
+| anello chiuso | alto | 11.3 | 14.1 | 2.6 | 4.0 |
+| gioco SG90 non compensato | home | 11.5 | 16.2 | 10.3 | 14.9 |
+| gioco SG90 non compensato | sbraccio | 42.6 | 49.2 | 16.3 | 24.1 |
+| gioco SG90 non compensato | basso | 13.1 | 17.5 | 12.3 | 17.9 |
+| gioco SG90 non compensato | alto | 12.3 | 15.3 | 3.5 | 5.2 |
 
 Sensibilità (scenario B, una fonte alla volta + taratura; p95 in mm):
 
@@ -397,12 +388,12 @@ Sensibilità (scenario B, una fonte alla volta + taratura; p95 in mm):
 | banda morta | 1.95 | 1.72 | 3.14 | 2.86 |
 | cedimento servo | 4.77 | 6.37 | 7.81 | 10.23 |
 | gioco ingranaggi SG90 | 3.25 | 3.88 | 5.35 | 6.35 |
-| squadrette | 3.58 | 4.94 | 5.82 | 7.86 |
+| squadrette | 3.49 | 4.80 | 5.68 | 7.66 |
 | giochi perni | 4.29 | 0.00 | 12.20 | 0.00 |
 | viti E/A inclinate | 7.46 | 0.00 | 19.44 | 0.00 |
 | lunghezze stampate | 1.71 | 0.00 | 4.27 | 0.00 |
 | assi dei servo | 1.43 | 0.00 | 3.61 | 0.00 |
-| cedevolezza struttura | 7.23 | 0.00 | 45.71 | 0.00 |
+| cedevolezza struttura | 3.27 | 0.00 | 22.60 | 0.00 |
 | taratura | 1.38 | 0.00 | 2.01 | 0.00 |
 
 ![mc](out/v8_montecarlo.png)
@@ -418,10 +409,10 @@ appoggiate al piatto, creste dei layer 0–0.1 sui fianchi della gola a coda di 
 
 | accoppiamento | P(non entra senza limare) % | P(gioco eccessivo) % | nota |
 |---|---|---|---|
-| SG90 nelle finestre delle guance (ponte in alto) | 36.6 | 0.2 | finestra verticale: il lato alto è un ponte che cala |
-| SG90 nel piano pinza (stampato capovolto) | 28.5 | – | foro sul piatto: piede d'elefante 0–0.2 |
-| SG90 nella torre della base | 11.9 | – |  |
-| squadretta nella tasca (horn_len 32.5) | 28.1 | 67.7 | gioco angolare mediano 1.3° dove non è avvitata |
+| SG90 nelle finestre delle guance (ponte in alto) | 10.4 | 9.4 | finestra verticale: il lato alto è un ponte che cala |
+| SG90 nel piano pinza (stampato capovolto) | 3.5 | – | foro sul piatto: piede d'elefante 0–0.2 |
+| SG90 nella torre della base | 0.1 | – |  |
+| squadretta nella tasca (horn_len 33.5) | 0.1 | 65.6 | gioco angolare mediano 1.2° dove non è avvitata |
 | dado M3 nella sede esagonale | 0.0 | 1.7 | gioco eccessivo = il dado gira nella sede |
 | piombo nella sede del braccio | 0.4 | 0.1 | gioco eccessivo = sporge oltre la sede, il coperchio non chiude |
 | piombo nella sede della manovella (aperta sul piatto) | 5.5 | 0.1 | piede d'elefante sull'imbocco |
@@ -433,18 +424,18 @@ appoggiate al piatto, creste dei layer 0–0.1 sui fianchi della gola a coda di 
 |   variante clr_pocket 0.25 (SG90 guance) | 22.4 | – |  |
 |   variante clr_pocket 0.3 (SG90 guance) | 10.4 | – |  |
 |   variante clr_pocket 0.3 + 0.3 sul lato del ponte (SG90 guance) | 0.0 | – |  |
-|   variante clr_pocket 0.3 (SG90 piano pinza) | 3.5 | – |  |
-|   variante clr_pocket 0.3 (SG90 torre base) | 0.1 | – |  |
+|   variante clr_pocket 0.3 (SG90 piano pinza) | 0.0 | – |  |
+|   variante clr_pocket 0.3 (SG90 torre base) | 0.0 | – |  |
 
 
 ## Raccomandazioni (in ordine di sezione)
 
-1. Braccio: due nervature 2.5 x 6 mm sui bordi della faccia lato servo (x 24…74, la canalina resta in mezzo): I fuori piano da 181 a 976 mm⁴. Ricontrollare con cad/check_grid.sh.
+1. Braccio: due nervature 2.5 x 6 mm sui bordi della faccia lato servo (x 24…74, la canalina resta in mezzo): I fuori piano da 1060 a 1060 mm⁴. Ricontrollare con cad/check_grid.sh.
 2. Guance torretta: fazzoletti esterni da 25 a 50 mm di altezza e profondi 12 (stanno a x ±24, fuori dal servo).
-3. Gomito: mozzo esterno d12 x 8 mm sul braccio attorno al foro E (foro lungo 14 invece di 6.5) e perno E da 4 mm (vite M4 o spina rettificata): con le due modifiche sopra la freccia in home scende da 13.7 a 4.5 mm.
+3. Gomito: mozzo esterno d12 x 8 mm sul braccio attorno al foro E (foro lungo 14 invece di 6.5) e perno E da 4 mm (vite M4 o spina rettificata): con le due modifiche sopra la freccia in home scende da 5.5 a 4.4 mm.
 4. Strutturale vero: il rimedio di fondo è eliminare l'eccentricità (braccio a forcella con una seconda piastra oltre il piano della biella, perno E in doppio taglio). Tutte le cedevolezze del gomito scalano con Δy².
 5. lim_e minimo da 20° a 35°: perde 10 mm di sbraccio ma divide per ~3 forza nella biella e sensibilità (1/sin²e).
-6. Dito ganascia: stem_t 3.5 → 6 mm e tab[1] 4 → 5 mm (taglio interlaminare 16.6 → 5.6 MPa).
+6. Dito ganascia: stem_t 3.5 → 6 mm e tab[1] 4 → 5 mm (taglio interlaminare 5.6 → 5.6 MPa).
 7. Perno E in acciaio d4 (vite M4x45 o spina) con fori 4.2/4.3; in alternativa M3 classe 12.9 a gambo parziale.
 8. A: integrare il distanziale d7 nella manovella (mozzo stampato pieno alto 4.9 mm) e crank_t 4 → 6 mm al perno.
 9. A, B, P1, U: frenafiletti medio sul dado incassato (ruotano: un dado normale si svita).
@@ -457,7 +448,7 @@ appoggiate al piatto, creste dei layer 0–0.1 sui fianchi della gola a coda di 
 16. Grasso al PTFE/silicone sulle code di rondine: μ 0.35 → 0.15 porta la presa da 1.9 a 3.1 N per dito.
 17. rack_len 40 → 50 mm (e y_half 36 → 41) se c'è spazio: rendimento 0.40 → 0.44.
 18. clr_slide: tenere 0.3 finché il provino non dice altro; sotto 0.2 le creste dei layer della gola fanno impuntare.
-19. snap_hook 0.4 → 0.8 mm nella base (solo per la culla ESP32): sovrapposizione 0.6, ε 0.20%, P(non trattiene) da 47% a 0.0%.
+19. snap_hook 0.4 → 0.8 mm nella base (solo per la culla ESP32): sovrapposizione 0.6, ε 0.20%, P(non trattiene) da 0% a 0.0%.
 20. Raccordo r 1 mm al piede della lamella (oggi spigolo vivo su un piano di layer).
 21. Staffa → piano pinza: interasse viti 5 → 7.5 mm (x_back + 2.5 e x_back + 10, flangia della staffa 12 → 14 mm), oppure una vite sola M3 con dado + perno di centraggio.
 22. Biella motrice: occhio d8 → d9 attorno al dado di A, o sede ruotata di 30° (lato piatto verso l'estremità).
@@ -467,9 +458,9 @@ appoggiate al piatto, creste dei layer 0–0.1 sui fianchi della gola a coda di 
 26. Guance: fori di aerazione o 2 mm di distanza tra cassa del servo e PLA sui lati lunghi (la finestra ora è a contatto).
 27. Se si vuole lasciare il braccio in posa a lungo, stampare torretta e braccio in PETG o PLA+ ricotto (HDT 60 → 80+ °C).
 28. Pinza: non chiudere a stallo su un oggetto per ore (dito in taglio interlaminare): il firmware dovrebbe aprire di 0.5 mm dopo il contatto.
-29. horn_len 32.5 → 33.5: con squadrette fino a 33.5 mm la tasca da 32.9 non le prende nel 28% dei casi (0.1% con 33.5); la tasca un po' lunga non costa nulla, la squadretta è centrata dall'albero.
+29. horn_len 32.5 → 33.5: con squadrette fino a 33.5 mm la tasca da 32.9 non le prende nel 0% dei casi (0.1% con 33.5); la tasca un po' lunga non costa nulla, la squadretta è centrata dall'albero.
 30. Avvitare la squadretta anche nella torretta e nella manovella (2 viti autofilettanti nei fori delle punte, come nel braccio): toglie il gioco angolare della tasca (mediano 1.3°, sulla base ±1.4 mm al TCP in home).
-31. Finestre SG90: clr_pocket 0.2 → 0.3 per i servo (guance 37% → 10%, torre base 12% → ~0%), e nelle guance altri 0.3 mm sul lato alto (ponte che cala) → 0%. Piano pinza: smusso 0.5 x 45° sul lato del piatto o compensazione del piede d'elefante nello slicer.
+31. Finestre SG90: clr_pocket 0.2 → 0.3 per i servo (guance 10% → 10%, torre base 0% → ~0%), e nelle guance altri 0.3 mm sul lato alto (ponte che cala) → 0%. Piano pinza: smusso 0.5 x 45° sul lato del piatto o compensazione del piede d'elefante nello slicer.
 32. Sedi dei piombi della manovella: smusso 0.4 x 45° sull'imbocco (lato piatto) contro il piede d'elefante.
 33. Corona della base: grasso al PTFE e appoggio su un anello più piccolo; l'attrito ferma la torretta prima del bersaglio dal lato da cui arriva (errore bimodale ±0.5–1° → ±2–3 mm al TCP). In firmware: arrivare sempre dallo stesso verso (piccolo sovra-corsa e ritorno) dimezza la ripetibilità della base.
 34. Ripetibilità della spalla in home: col braccio verticale la coppia di gravità è nulla con qualunque contrappeso, quindi il giunto si ferma in un punto a caso della banda morta e dei giochi. Un elastico o una molla a torsione tra braccio e torretta da ~0.1 kg·cm costanti lo tiene sempre appoggiato dallo stesso lato.
@@ -487,4 +478,4 @@ appoggiate al piatto, creste dei layer 0–0.1 sui fianchi della gola a coda di 
 Modelli a travi e lastre con rigidezze di bordo stimate, non FEM. La freccia elastica è lineare: oltre qualche grado di rotazione
 dell'avambraccio (sbraccio, ripiegato) indica una cedevolezza eccessiva, non un valore esatto. Le distribuzioni del Monte Carlo
 sono tipiche di una FDM tarata e di SG90 cloni; il provino di `cad/test/tolerance_coupon.scad` le sostituisce con misure.
-Tempo di calcolo: 96 s.
+Tempo di calcolo: 105 s.

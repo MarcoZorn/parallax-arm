@@ -209,8 +209,9 @@ def fits(n=100000):
         return p_bad
 
     sg = (rng.uniform(22.5, 23.2, n), rng.uniform(12.0, 12.6, n))
-    winL = P["sg_body"][0] + 2 * P["clr_pocket"]
-    winW = P["sg_body"][1] + 2 * P["clr_pocket"]
+    cs = P.get("clr_servo", P["clr_pocket"])   # finestre servo: gioco dedicato in params.scad
+    winL = P["sg_body"][0] + 2 * cs
+    winW = P["sg_body"][1] + 2 * cs
     bridge = rng.uniform(0.05, 0.3, n)
     eL, eW_ = rng.normal(HOLE_MU, HOLE_SD, n), rng.normal(HOLE_MU, HOLE_SD, n)
     bad = {}

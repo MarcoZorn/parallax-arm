@@ -26,15 +26,15 @@ NAMES = ["base", "spalla", "gomito", "pinza"]
 md = []  # righe di results.md
 res = {}
 
-REACH = [0, 20, 0, 30]  # braccio quasi orizzontale avanti, avambraccio orizzontale: caso peggiore
+REACH = [0, 35, 0, 30]  # sbraccio massimo col vincolo th2-phi >= 35, avambraccio orizzontale: caso peggiore
 HOME = [0, 90, 0, 30]
 BACK = [0, 160, 10, 30]  # braccio tutto indietro: coppia della spalla invertita
 LOADS = [("0 g", 0.0, False), ("30 g", 0.03, False), ("50 g", 0.05, False),
          ("30 g + CAM", 0.03, True), ("50 g + CAM", 0.05, True)]
 OBJ = 25.0  # mm, oggetto preso dalla pinza
 # Pick & place tra pose estreme (q1, th2, phi, g, oggetto tra le dita)
-SEQ = [([-90, 20, 0, 40], None),  # sopra il pezzo, sbraccio massimo a sinistra
-       ([-90, 20, 0, 22], OBJ),  # chiude sul pezzo (comando 3 mm sotto la larghezza)
+SEQ = [([-90, 35, 0, 40], None),  # sopra il pezzo, sbraccio massimo a sinistra
+       ([-90, 35, 0, 22], OBJ),  # chiude sul pezzo (comando 3 mm sotto la larghezza)
        ([90, 160, 10, 22], OBJ),  # giro completo: base 180°, spalla 140°
        ([0, 60, -70, 22], OBJ),  # deposito basso davanti
        ([0, 60, -70, 40], None),  # apre
@@ -75,7 +75,7 @@ def scenario1():
     md.append("Errore a regime (comando − albero) dopo 2 s, avvicinamento da +2° e da −2°. "
               "T = coppia gravitazionale per lavoro virtuale. Duty = uscita del driver (1 = saturo).\n")
     rows, res["static"] = [], []
-    for pname, pose in [("REACH th2=20 phi=0", REACH), ("BACK th2=160 phi=10", BACK), ("HOME", HOME)]:
+    for pname, pose in [("REACH th2=35 phi=0", REACH), ("BACK th2=160 phi=10", BACK), ("HOME", HOME)]:
         for lname, pl, cam in LOADS:
             if pose is not REACH and lname not in ("0 g", "50 g + CAM"):
                 continue
@@ -102,7 +102,7 @@ def scenario1():
               "rotazione libera dell'avambraccio = 0.3 mm / (crank_r·sin(th2−phi)), del polso = 0.3/(lev_r·sin th2) + "
               "0.3/(lev2_r·cos phi). Sotto carico è un offset ripetibile, a carico nullo è gioco vero.\n")
     rows = []
-    for e in (20, 45, 90, 150):
+    for e in (35, 45, 90, 150):
         dphi = math.degrees(0.3 / (20 * math.sin(math.radians(e))))
         rows.append([f"{e}°", f"±{dphi / 2:.2f}°", f"±{math.radians(dphi / 2) * 80:.2f}"])
     table(["th2−phi", "gioco avambraccio", "TCP mm (L2)"], rows)
@@ -423,7 +423,7 @@ def scenario5():
 if __name__ == "__main__":
     t0 = time.time()
     arm.selfcheck()
-    ts, te = static_torques(dict(DEFAULT, payload=0.05), 20, 0)
+    ts, te = static_torques(dict(DEFAULT, payload=0.05), REACH[1], REACH[2])
     md.append("# Risultati simulazione dinamica (generato da run_all.py)\n")
     md.append(f"Massa mobile totale (0 g, 4+2 piombi): {sum(arm.Arm(DEFAULT).m.body_mass) * 1000:.0f} g. "
               f"Coppie statiche REACH 50 g: spalla {ts / KGCM:.3f}, gomito {te / KGCM:.3f} kg·cm.\n")
