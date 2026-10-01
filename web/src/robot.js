@@ -16,7 +16,7 @@ export const JOINTS = [
 ];
 
 // Vincolo del parallelogramma: PAR[0] <= th2 - phi <= PAR[1]
-export const PAR = [20, 150];
+export const PAR = [35, 150];
 
 // Taratura per giunto (§4). min/max sono i limiti di giunto usati ovunque.
 export const defaultCal = () => [

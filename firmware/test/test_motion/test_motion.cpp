@@ -44,13 +44,13 @@ static void test_limits() {
 }
 
 static void test_constraint() {
-    float low[NJ] = {0, 30, 18, 30};  // th2-phi = 12, entrambi nei limiti
+    float low[NJ] = {0, 30, 2, 30};  // th2-phi = 28, entrambi nei limiti
     TEST_ASSERT_FALSE(check_target(low, cal, err, sizeof err));
-    TEST_ASSERT_EQUAL_STRING("fuori vincolo: th2-phi=12", err);
+    TEST_ASSERT_EQUAL_STRING("fuori vincolo: th2-phi=28", err);
     float high[NJ] = {0, 150, -5, 30};  // 155
     TEST_ASSERT_FALSE(check_target(high, cal, err, sizeof err));
     TEST_ASSERT_EQUAL_STRING("fuori vincolo: th2-phi=155", err);
-    float edge[NJ] = {0, 40, 20, 30};  // 20, al bordo: ammesso
+    float edge[NJ] = {0, 40, 5, 30};  // 35, al bordo: ammesso
     TEST_ASSERT_TRUE(check_target(edge, cal, err, sizeof err));
     float edge_hi[NJ] = {0, 140, -10, 30};  // 150, al bordo: ammesso
     TEST_ASSERT_TRUE(check_target(edge_hi, cal, err, sizeof err));

@@ -22,7 +22,7 @@ constexpr float Q_MIN[NJ] = {-90, 20, -70, 0};  // ° ° ° mm
 constexpr float Q_MAX[NJ] = {90, 160, 70, 59};
 
 // ---- vincolo del parallelogramma: PAR_MIN <= th2 - phi <= PAR_MAX ----
-constexpr float PAR_MIN = 20, PAR_MAX = 150;
+constexpr float PAR_MIN = 35, PAR_MAX = 150;  // 35: sotto, il parallelogramma amplifica la cedevolezza (sim/structural)
 
 constexpr float HOME_DEFAULT[NJ] = {0, 90, 0, 30};
 
