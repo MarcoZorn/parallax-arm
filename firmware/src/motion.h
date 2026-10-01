@@ -18,7 +18,8 @@ bool check_cal(const Cal cal[NJ], char* err, size_t n);
 
 // Profilo trapezoidale sincronizzato, calcolato online a ogni tick.
 // Da fermo tutti i giunti restano proporzionali (retta nello spazio giunti) e arrivano insieme;
-// un nuovo target a metà moto riparte da posizione e velocità correnti.
+// un nuovo target a metà moto riparte da posizione e velocità correnti. Limiti e vincolo th2-phi sono
+// bordi morbidi (si frena prima di toccarli): anche una traiettoria curva da retarget/stop non li supera.
 struct Planner {
     float q[NJ] = {}, v[NJ] = {}, target[NJ] = {};
     float vmax[NJ] = {}, amax[NJ] = {};  // limiti del moto corrente, già scalati per f
